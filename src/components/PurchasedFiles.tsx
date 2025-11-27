@@ -74,14 +74,23 @@ export default function PurchasedFiles({ productId, productTitle }: PurchasedFil
       URL.revokeObjectURL(url);
 
       if (profile?.wallet_address) {
-        await supabase
+        const { data: accessData } = await supabase
           .from('purchase_access')
-          .update({
-            last_accessed_at: new Date().toISOString(),
-            download_count: supabase.sql`download_count + 1`,
-          })
+          .select('download_count')
           .eq('product_id', productId)
-          .eq('buyer_wallet', profile.wallet_address);
+          .eq('buyer_wallet', profile.wallet_address)
+          .single();
+
+        if (accessData) {
+          await supabase
+            .from('purchase_access')
+            .update({
+              last_accessed_at: new Date().toISOString(),
+              download_count: (accessData.download_count || 0) + 1,
+            })
+            .eq('product_id', productId)
+            .eq('buyer_wallet', profile.wallet_address);
+        }
       }
     } catch (err) {
       console.error('Download failed:', err);
@@ -109,12 +118,12 @@ export default function PurchasedFiles({ productId, productTitle }: PurchasedFil
 
   return (
     <div className="space-y-4">
-      <div className="bg-green-50 border border-green-200 rounded-lg p-4 flex items-center space-x-3">
-        <CheckCircle className="w-6 h-6 text-green-600 flex-shrink-0" />
+      <div className="bg-black border-2 border-primary p-4 flex items-center space-x-3 shadow-neo">
+        <CheckCircle className="w-6 h-6 text-primary flex-shrink-0" />
         <div>
-          <p className="text-green-800 font-medium">Purchase Successful!</p>
-          <p className="text-sm text-green-700">
-            You now have access to {files.length} file{files.length !== 1 ? 's' : ''} for "{productTitle}"
+          <p className="text-primary font-bold font-mono uppercase">Purchase Successful!</p>
+          <p className="text-sm text-gray-400 font-mono uppercase">
+            &gt;&gt; ACCESS_GRANTED_TO {files.length} FILE{files.length !== 1 ? 'S' : ''} FOR "{productTitle}"
           </p>
         </div>
       </div>
@@ -123,17 +132,17 @@ export default function PurchasedFiles({ productId, productTitle }: PurchasedFil
         {files.map((file) => (
           <div
             key={file.id}
-            className="bg-white border border-gray-200 rounded-lg p-4 flex items-center justify-between hover:border-blue-300 transition-colors"
+            className="bg-black border-2 border-white p-4 flex items-center justify-between hover:border-primary transition-colors group"
           >
             <div className="flex items-center space-x-3 flex-1 min-w-0">
               <div className="flex-shrink-0">
                 {getFileIcon(file.file_type)}
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium text-gray-900 truncate">
+                <p className="text-sm font-bold text-white truncate font-mono uppercase group-hover:text-primary transition-colors">
                   {file.file_name}
                 </p>
-                <p className="text-xs text-gray-500">
+                <p className="text-xs text-gray-500 font-mono">
                   {formatFileSize(file.file_size)}
                 </p>
               </div>
@@ -141,17 +150,17 @@ export default function PurchasedFiles({ productId, productTitle }: PurchasedFil
             <button
               onClick={() => handleDownload(file)}
               disabled={downloading === file.id}
-              className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 flex-shrink-0 ml-4"
+              className="flex items-center space-x-2 px-4 py-2 bg-primary text-black border-2 border-primary hover:bg-white hover:border-white hover:text-black transition-colors disabled:opacity-50 flex-shrink-0 ml-4 font-bold uppercase font-mono shadow-neo"
             >
               {downloading === file.id ? (
                 <>
-                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                  <span className="text-sm">Downloading...</span>
+                  <div className="w-4 h-4 border-2 border-black border-t-transparent rounded-full animate-spin"></div>
+                  <span className="text-sm">DOWNLOADING...</span>
                 </>
               ) : (
                 <>
                   <Download className="w-4 h-4" />
-                  <span className="text-sm">Download</span>
+                  <span className="text-sm">DOWNLOAD</span>
                 </>
               )}
             </button>
@@ -159,9 +168,9 @@ export default function PurchasedFiles({ productId, productTitle }: PurchasedFil
         ))}
       </div>
 
-      <div className="bg-gray-50 rounded-lg p-4">
-        <p className="text-xs text-gray-600 mb-2 font-medium">Important Notes:</p>
-        <ul className="text-xs text-gray-600 space-y-1 list-disc list-inside">
+      <div className="bg-black border-2 border-white/20 p-4">
+        <p className="text-xs text-gray-400 mb-2 font-bold uppercase font-mono">Important Notes:</p>
+        <ul className="text-xs text-gray-500 space-y-1 list-disc list-inside font-mono uppercase">
           <li>Files are accessible anytime from your purchases</li>
           <li>Download limits may apply depending on the seller</li>
           <li>Keep your files safe - downloads are tracked</li>

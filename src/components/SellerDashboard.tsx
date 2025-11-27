@@ -4,6 +4,8 @@ import { supabase, type Product } from '../lib/supabase';
 import { useAuth } from '../contexts/AuthContext';
 import CreateProductModal from './CreateProductModal';
 
+import SEO from './SEO';
+
 export default function SellerDashboard() {
   const { profile } = useAuth();
   const [products, setProducts] = useState<Product[]>([]);
@@ -90,31 +92,36 @@ export default function SellerDashboard() {
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">
+      <SEO
+        title="Seller Dashboard"
+        description="Manage your inventory, create listings, and track your sales."
+        type="dashboard"
+      />
       <div className="flex justify-between items-center mb-8">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">My Store</h1>
-          <p className="text-gray-600 mt-1">Manage your products and services</p>
+          <h1 className="text-3xl font-bold text-white font-display uppercase">My Store</h1>
+          <p className="text-gray-400 mt-1 font-mono uppercase">&gt;&gt; MANAGE_INVENTORY_SYSTEM</p>
         </div>
         <button
           onClick={() => setShowCreateModal(true)}
-          className="flex items-center space-x-2 bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors"
+          className="neo-button-primary flex items-center space-x-2"
         >
           <Plus className="w-5 h-5" />
-          <span>Create Listing</span>
+          <span>CREATE LISTING</span>
         </button>
       </div>
 
       {products.length === 0 ? (
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-12 text-center">
-          <Package className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-          <h3 className="text-xl font-semibold text-gray-900 mb-2">No products yet</h3>
-          <p className="text-gray-600 mb-6">Create your first product or service listing</p>
+        <div className="bg-surface border-2 border-white p-12 text-center shadow-neo-white">
+          <Package className="w-16 h-16 text-gray-500 mx-auto mb-4" />
+          <h3 className="text-xl font-bold text-white mb-2 font-mono uppercase">No products yet</h3>
+          <p className="text-gray-400 mb-6 font-mono uppercase">&gt;&gt; INITIATE_FIRST_LISTING</p>
           <button
             onClick={() => setShowCreateModal(true)}
-            className="inline-flex items-center space-x-2 bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors"
+            className="neo-button-primary inline-flex items-center space-x-2"
           >
             <Plus className="w-5 h-5" />
-            <span>Create Listing</span>
+            <span>CREATE LISTING</span>
           </button>
         </div>
       ) : (
@@ -122,37 +129,36 @@ export default function SellerDashboard() {
           {products.map((product) => (
             <div
               key={product.id}
-              className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-shadow"
+              className="bg-black border-2 border-white overflow-hidden shadow-neo hover:shadow-neo-white transition-all"
             >
               {product.image_url && (
                 <img
                   src={product.image_url}
                   alt={product.title}
-                  className="w-full h-48 object-cover"
+                  className="w-full h-48 object-cover border-b-2 border-white filter grayscale hover:grayscale-0 transition-all"
                 />
               )}
               <div className="p-5">
                 <div className="flex items-start justify-between mb-3">
                   <div className="flex-1">
-                    <h3 className="font-semibold text-gray-900 mb-1">{product.title}</h3>
-                    <p className="text-sm text-gray-600 line-clamp-2">{product.description}</p>
+                    <h3 className="font-bold text-white mb-1 font-display uppercase tracking-wide">{product.title}</h3>
+                    <p className="text-sm text-gray-400 line-clamp-2 font-mono">{product.description}</p>
                   </div>
                   <span
-                    className={`ml-2 px-2 py-1 rounded text-xs font-medium ${
-                      product.is_active
-                        ? 'bg-green-100 text-green-700'
-                        : 'bg-gray-100 text-gray-700'
-                    }`}
+                    className={`ml-2 px-2 py-1 text-xs font-bold border-2 uppercase ${product.is_active
+                      ? 'bg-primary text-black border-primary'
+                      : 'bg-black text-gray-500 border-gray-500'
+                      }`}
                   >
                     {product.is_active ? 'Active' : 'Inactive'}
                   </span>
                 </div>
 
                 <div className="flex items-center justify-between mb-4">
-                  <div className="text-2xl font-bold text-gray-900">
+                  <div className="text-2xl font-bold text-white font-mono">
                     {product.price} {product.currency}
                   </div>
-                  <span className="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded">
+                  <span className="text-xs bg-black text-primary border border-primary px-2 py-1 font-mono uppercase">
                     {product.type}
                   </span>
                 </div>
@@ -161,9 +167,9 @@ export default function SellerDashboard() {
                   {product.tags.slice(0, 3).map((tag, i) => (
                     <span
                       key={i}
-                      className="text-xs bg-gray-100 text-gray-700 px-2 py-1 rounded"
+                      className="text-xs bg-black text-gray-300 border border-gray-600 px-2 py-1 font-mono uppercase"
                     >
-                      {tag}
+                      #{tag}
                     </span>
                   ))}
                 </div>
@@ -171,29 +177,29 @@ export default function SellerDashboard() {
                 <div className="flex items-center space-x-2">
                   <button
                     onClick={() => copyProductLink(product.unique_link)}
-                    className="flex-1 flex items-center justify-center space-x-1 px-3 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors text-sm"
+                    className="flex-1 flex items-center justify-center space-x-1 px-3 py-2 bg-black text-white border-2 border-white hover:bg-white hover:text-black transition-colors text-sm font-bold uppercase font-mono"
                   >
                     <Copy className="w-4 h-4" />
-                    <span>Copy Link</span>
+                    <span>COPY</span>
                   </button>
                   <button
                     onClick={() => {
                       setEditingProduct(product);
                       setShowCreateModal(true);
                     }}
-                    className="p-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
+                    className="p-2 bg-black text-white border-2 border-white hover:bg-white hover:text-black transition-colors"
                   >
                     <Edit2 className="w-4 h-4" />
                   </button>
                   <button
                     onClick={() => toggleProductStatus(product)}
-                    className="p-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
+                    className="p-2 bg-black text-white border-2 border-white hover:bg-white hover:text-black transition-colors"
                   >
                     <ExternalLink className="w-4 h-4" />
                   </button>
                   <button
                     onClick={() => deleteProduct(product.id)}
-                    className="p-2 bg-red-50 text-red-600 rounded-lg hover:bg-red-100 transition-colors"
+                    className="p-2 bg-black text-red-500 border-2 border-red-500 hover:bg-red-500 hover:text-black transition-colors"
                   >
                     <Trash2 className="w-4 h-4" />
                   </button>

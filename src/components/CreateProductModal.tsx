@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { X, Upload, Image as ImageIcon } from 'lucide-react';
+import { X, Upload } from 'lucide-react';
 import { supabase, type Product } from '../lib/supabase';
 import { useAuth } from '../contexts/AuthContext';
 import { useWallet } from '../contexts/WalletContext';
@@ -26,7 +26,7 @@ export default function CreateProductModal({ product, onClose }: CreateProductMo
     description: '',
     type: 'product' as 'product' | 'service',
     price: '',
-    currency: 'ETH',
+    currency: 'USDC',
     seller_wallet: walletAddress || '',
     unique_link: '',
     tags: '',
@@ -242,15 +242,15 @@ export default function CreateProductModal({ product, onClose }: CreateProductMo
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-      <div className="bg-white rounded-2xl shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-        <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between">
-          <h2 className="text-2xl font-bold text-gray-900">
+    <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+      <div className="bg-surface border-2 border-white shadow-neo-white max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+        <div className="sticky top-0 bg-black border-b-2 border-white px-6 py-4 flex items-center justify-between z-10">
+          <h2 className="text-2xl font-bold text-white font-display uppercase">
             {product ? 'Edit Listing' : 'Create New Listing'}
           </h2>
           <button
             onClick={onClose}
-            className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+            className="p-2 hover:bg-white hover:text-black text-white transition-colors border-2 border-transparent hover:border-white"
           >
             <X className="w-5 h-5" />
           </button>
@@ -258,28 +258,28 @@ export default function CreateProductModal({ product, onClose }: CreateProductMo
 
         <form onSubmit={handleSubmit} className="p-6 space-y-5">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-bold text-gray-400 mb-1 font-mono uppercase">
               Title
             </label>
             <input
               type="text"
               value={formData.title}
               onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
-              placeholder="Enter product or service title"
+              className="w-full px-4 py-2 bg-black border-2 border-white text-white placeholder-gray-600 focus:border-primary focus:shadow-neo outline-none font-mono uppercase"
+              placeholder="ENTER_TITLE"
               required
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-bold text-gray-400 mb-1 font-mono uppercase">
               Description
             </label>
             <textarea
               value={formData.description}
               onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none resize-none"
-              placeholder="Describe your offering"
+              className="w-full px-4 py-2 bg-black border-2 border-white text-white placeholder-gray-600 focus:border-primary focus:shadow-neo outline-none resize-none font-mono"
+              placeholder="DESCRIBE_OFFERING..."
               rows={4}
               required
             />
@@ -287,13 +287,13 @@ export default function CreateProductModal({ product, onClose }: CreateProductMo
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-bold text-gray-400 mb-1 font-mono uppercase">
                 Type
               </label>
               <select
                 value={formData.type}
                 onChange={(e) => setFormData({ ...formData, type: e.target.value as 'product' | 'service' })}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+                className="w-full px-4 py-2 bg-black border-2 border-white text-white focus:border-primary focus:shadow-neo outline-none font-mono uppercase"
               >
                 <option value="product">Product</option>
                 <option value="service">Service</option>
@@ -301,7 +301,7 @@ export default function CreateProductModal({ product, onClose }: CreateProductMo
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-bold text-gray-400 mb-1 font-mono uppercase">
                 Price
               </label>
               <input
@@ -309,7 +309,7 @@ export default function CreateProductModal({ product, onClose }: CreateProductMo
                 step="0.0001"
                 value={formData.price}
                 onChange={(e) => setFormData({ ...formData, price: e.target.value })}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+                className="w-full px-4 py-2 bg-black border-2 border-white text-white placeholder-gray-600 focus:border-primary focus:shadow-neo outline-none font-mono"
                 placeholder="0.00"
                 required
               />
@@ -317,50 +317,40 @@ export default function CreateProductModal({ product, onClose }: CreateProductMo
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-bold text-gray-400 mb-1 font-mono uppercase">
               Currency
             </label>
             <select
               value={formData.currency}
               onChange={(e) => setFormData({ ...formData, currency: e.target.value })}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+              className="w-full px-4 py-2 bg-black border-2 border-white text-white focus:border-primary focus:shadow-neo outline-none font-mono uppercase"
             >
-              <optgroup label="Ethereum Mainnet">
-                <option value="ETH">ETH (Ethereum)</option>
-                <option value="USDT">USDT (Tether USD)</option>
-                <option value="USDC">USDC (USD Coin)</option>
-                <option value="DAI">DAI (Dai Stablecoin)</option>
-              </optgroup>
-              <optgroup label="Polygon Network">
-                <option value="MATIC">MATIC (Polygon)</option>
-                <option value="USDT-POLYGON">USDT (Polygon)</option>
-                <option value="USDC-POLYGON">USDC (Polygon)</option>
-              </optgroup>
+              <option value="USDC">USDC (Base)</option>
             </select>
-            <p className="text-xs text-gray-500 mt-1">
-              Select the cryptocurrency you want to receive as payment
+            <p className="text-xs text-gray-500 mt-1 font-mono uppercase">
+              &gt;&gt; SELECT_PAYMENT_CURRENCY
             </p>
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-bold text-gray-400 mb-1 font-mono uppercase">
               Payment Wallet Address
             </label>
             <input
               type="text"
               value={formData.seller_wallet}
               onChange={(e) => setFormData({ ...formData, seller_wallet: e.target.value })}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none font-mono text-sm"
+              className="w-full px-4 py-2 bg-black border-2 border-white text-white placeholder-gray-600 focus:border-primary focus:shadow-neo outline-none font-mono text-sm"
               placeholder="0x..."
               required
             />
-            <p className="text-xs text-gray-500 mt-1">
-              90% of payments will be sent to this wallet (10% platform fee)
+            <p className="text-xs text-gray-500 mt-1 font-mono uppercase">
+              &gt;&gt; 90%_PAYOUT_TO_THIS_WALLET (10%_PLATFORM_FEE)
             </p>
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-bold text-gray-400 mb-1 font-mono uppercase">
               Unique Link
             </label>
             <div className="flex space-x-2">
@@ -368,35 +358,35 @@ export default function CreateProductModal({ product, onClose }: CreateProductMo
                 type="text"
                 value={formData.unique_link}
                 onChange={(e) => setFormData({ ...formData, unique_link: e.target.value })}
-                className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none font-mono text-sm"
+                className="flex-1 px-4 py-2 bg-black border-2 border-white text-white placeholder-gray-600 focus:border-primary focus:shadow-neo outline-none font-mono text-sm"
                 placeholder="my-product-abc123"
                 required
               />
               <button
                 type="button"
                 onClick={generateUniqueLink}
-                className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
+                className="px-4 py-2 bg-black text-white border-2 border-white hover:bg-white hover:text-black transition-colors font-mono uppercase font-bold"
               >
-                Generate
+                GENERATE
               </button>
             </div>
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-bold text-gray-400 mb-1 font-mono uppercase">
               Tags
             </label>
             <input
               type="text"
               value={formData.tags}
               onChange={(e) => setFormData({ ...formData, tags: e.target.value })}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
-              placeholder="web3, nft, design (comma separated)"
+              className="w-full px-4 py-2 bg-black border-2 border-white text-white placeholder-gray-600 focus:border-primary focus:shadow-neo outline-none font-mono uppercase"
+              placeholder="WEB3, NFT, DESIGN"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-3">
+            <label className="block text-sm font-bold text-gray-400 mb-3 font-mono uppercase">
               Product Image
             </label>
             {imagePreview ? (
@@ -404,12 +394,12 @@ export default function CreateProductModal({ product, onClose }: CreateProductMo
                 <img
                   src={imagePreview}
                   alt="Product preview"
-                  className="w-full h-64 object-cover rounded-lg border border-gray-200"
+                  className="w-full h-64 object-cover border-2 border-white filter grayscale"
                 />
                 <button
                   type="button"
                   onClick={removeImage}
-                  className="absolute top-2 right-2 p-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+                  className="absolute top-2 right-2 p-2 bg-red-500 text-black border-2 border-black hover:bg-red-400 transition-colors shadow-neo"
                 >
                   <X className="w-4 h-4" />
                 </button>
@@ -417,14 +407,14 @@ export default function CreateProductModal({ product, onClose }: CreateProductMo
             ) : (
               <div
                 onClick={() => imageInputRef.current?.click()}
-                className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center cursor-pointer hover:border-blue-500 hover:bg-blue-50 transition-colors"
+                className="border-2 border-dashed border-gray-600 p-8 text-center cursor-pointer hover:border-primary hover:bg-primary/10 transition-colors group"
               >
-                <Upload className="w-12 h-12 text-gray-400 mx-auto mb-3" />
-                <p className="text-gray-700 font-medium mb-1">
-                  Click to upload product image
+                <Upload className="w-12 h-12 text-gray-600 group-hover:text-primary mx-auto mb-3 transition-colors" />
+                <p className="text-gray-400 font-bold mb-1 font-mono uppercase group-hover:text-primary transition-colors">
+                  CLICK_TO_UPLOAD_IMAGE
                 </p>
-                <p className="text-sm text-gray-500">
-                  PNG, JPG, GIF up to 5MB
+                <p className="text-sm text-gray-600 font-mono uppercase">
+                  PNG, JPG, GIF UP TO 5MB
                 </p>
                 <input
                   ref={imageInputRef}
@@ -437,12 +427,12 @@ export default function CreateProductModal({ product, onClose }: CreateProductMo
             )}
           </div>
 
-          <div className="border-t border-gray-200 pt-5">
-            <label className="block text-sm font-medium text-gray-700 mb-3">
+          <div className="border-t-2 border-white/20 pt-5">
+            <label className="block text-sm font-bold text-gray-400 mb-3 font-mono uppercase">
               Digital Files (Optional)
             </label>
-            <p className="text-xs text-gray-600 mb-3">
-              Upload files that buyers will receive after purchase. Perfect for ebooks, templates, software, media files, etc.
+            <p className="text-xs text-gray-500 mb-3 font-mono uppercase">
+              &gt;&gt; UPLOAD_DELIVERABLE_ASSETS
             </p>
             <FileUpload
               onFilesSelected={setSelectedFiles}
@@ -452,15 +442,15 @@ export default function CreateProductModal({ product, onClose }: CreateProductMo
           </div>
 
           {error && (
-            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm">
+            <div className="bg-red-900/20 border-2 border-red-500 text-red-500 px-4 py-3 text-sm font-mono font-bold uppercase">
               {error}
             </div>
           )}
 
           {uploadingFiles && (
-            <div className="bg-blue-50 border border-blue-200 text-blue-700 px-4 py-3 rounded-lg text-sm flex items-center space-x-2">
-              <div className="w-4 h-4 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
-              <span>Uploading files...</span>
+            <div className="bg-black border-2 border-primary text-primary px-4 py-3 text-sm flex items-center space-x-2 font-mono font-bold uppercase">
+              <div className="w-4 h-4 border-2 border-primary border-t-transparent rounded-full animate-spin"></div>
+              <span>UPLOADING_FILES...</span>
             </div>
           )}
 
@@ -469,16 +459,16 @@ export default function CreateProductModal({ product, onClose }: CreateProductMo
               type="button"
               onClick={onClose}
               disabled={loading || uploadingFiles}
-              className="flex-1 px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-50"
+              className="flex-1 px-6 py-3 border-2 border-white text-white hover:bg-white hover:text-black transition-colors disabled:opacity-50 font-bold uppercase font-mono"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={loading || uploadingFiles}
-              className="flex-1 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50"
+              className="flex-1 px-6 py-3 bg-primary text-black border-2 border-primary hover:bg-white hover:border-white hover:text-black transition-colors disabled:opacity-50 font-bold uppercase font-mono shadow-neo hover:shadow-neo-white"
             >
-              {loading ? (uploadingFiles ? 'Uploading Files...' : 'Saving...') : product ? 'Update' : 'Create'}
+              {loading ? (uploadingFiles ? 'UPLOADING...' : 'SAVING...') : product ? 'UPDATE' : 'CREATE'}
             </button>
           </div>
         </form>

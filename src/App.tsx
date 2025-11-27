@@ -10,9 +10,8 @@ import Profile from './components/Profile';
 import MyPurchases from './components/MyPurchases';
 import ProductPage from './components/ProductPage';
 import UserProfilePage from './components/UserProfilePage';
-
 function AppContent() {
-  const { user, loading } = useAuth();
+  const { loading } = useAuth();
   const [currentView, setCurrentView] = useState('marketplace');
   const [productLink, setProductLink] = useState<string | null>(null);
   const [username, setUsername] = useState<string | null>(null);
@@ -59,38 +58,40 @@ function AppContent() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {currentView !== 'product-page' && currentView !== 'user-profile' && (
-        <Navbar currentView={currentView} onNavigate={handleNavigate} />
-      )}
-
-      <main>
-        {currentView === 'auth' && <Auth />}
-        {currentView === 'marketplace' && <Marketplace onNavigate={handleNavigate} />}
-        {currentView === 'product-page' && productLink && (
-          <ProductPage uniqueLink={productLink} onNavigate={handleNavigate} />
+    <div className="min-h-screen bg-background text-text-main relative overflow-hidden font-mono">
+      <div className="relative z-10">
+        {currentView !== 'product-page' && currentView !== 'user-profile' && (
+          <Navbar currentView={currentView} onNavigate={handleNavigate} />
         )}
-        {currentView === 'user-profile' && username && (
-          <UserProfilePage username={username} onNavigate={handleNavigate} />
-        )}
-        {currentView === 'my-purchases' && <MyPurchases />}
-        {currentView === 'seller-dashboard' && <SellerDashboard />}
-        {currentView === 'transactions' && <Transactions />}
-        {currentView === 'profile' && <Profile />}
-      </main>
 
-      {currentView !== 'product-page' && currentView !== 'user-profile' && (
-        <footer className="bg-white border-t border-gray-200 mt-16">
-          <div className="max-w-7xl mx-auto px-4 py-8">
-            <div className="text-center text-gray-600 text-sm">
-              <p className="mb-2">CryptoMarket - Decentralized Marketplace</p>
-              <p className="text-xs text-gray-500">
-                Platform fee: 10% per transaction
-              </p>
+        <main className="container mx-auto px-4 py-8">
+          {currentView === 'auth' && <Auth />}
+          {currentView === 'marketplace' && <Marketplace onNavigate={handleNavigate} />}
+          {currentView === 'product-page' && productLink && (
+            <ProductPage uniqueLink={productLink} onNavigate={handleNavigate} />
+          )}
+          {currentView === 'user-profile' && username && (
+            <UserProfilePage username={username} onNavigate={handleNavigate} />
+          )}
+          {currentView === 'my-purchases' && <MyPurchases />}
+          {currentView === 'seller-dashboard' && <SellerDashboard />}
+          {currentView === 'transactions' && <Transactions />}
+          {currentView === 'profile' && <Profile />}
+        </main>
+
+        {currentView !== 'product-page' && currentView !== 'user-profile' && (
+          <footer className="bg-surface border-t-2 border-white mt-16">
+            <div className="max-w-7xl mx-auto px-4 py-8">
+              <div className="text-center text-gray-400 text-sm">
+                <p className="mb-2 font-display font-bold text-lg text-primary uppercase tracking-widest">Ripework</p>
+                <p className="text-xs text-gray-500 font-mono">
+                  Platform fee: 10% per transaction
+                </p>
+              </div>
             </div>
-          </div>
-        </footer>
-      )}
+          </footer>
+        )}
+      </div>
     </div>
   );
 }

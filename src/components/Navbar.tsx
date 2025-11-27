@@ -22,64 +22,62 @@ export default function Navbar({ currentView, onNavigate }: NavbarProps) {
   };
 
   return (
-    <nav className="bg-white shadow-sm border-b border-gray-200">
+    <nav className="bg-surface sticky top-0 z-50 border-b-2 border-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16">
+        <div className="flex justify-between items-center h-20">
           <div className="flex items-center space-x-8">
             <button
               onClick={() => onNavigate('marketplace')}
-              className="flex items-center space-x-2 text-xl font-bold text-gray-900"
+              className="flex items-center space-x-2 group"
             >
-              <ShoppingBag className="w-6 h-6" />
-              <span>CryptoMarket</span>
+              <div className="p-2 bg-primary border-2 border-black group-hover:translate-x-1 group-hover:translate-y-1 transition-transform">
+                <ShoppingBag className="w-6 h-6 text-black" />
+              </div>
+              <span className="text-2xl font-bold font-display text-white uppercase tracking-tighter">Ripework</span>
             </button>
 
             {user && (
               <div className="hidden md:flex items-center space-x-4">
                 <button
                   onClick={() => onNavigate('marketplace')}
-                  className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
-                    currentView === 'marketplace'
-                      ? 'bg-gray-100 text-gray-900'
-                      : 'text-gray-600 hover:text-gray-900'
-                  }`}
+                  className={`px-4 py-2 font-bold uppercase tracking-wide transition-all duration-200 border-2 ${currentView === 'marketplace'
+                    ? 'bg-primary border-primary text-black shadow-neo-white'
+                    : 'bg-transparent border-transparent text-gray-400 hover:text-white hover:border-white'
+                    }`}
                 >
                   Marketplace
                 </button>
 
                 <button
                   onClick={() => onNavigate('my-purchases')}
-                  className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
-                    currentView === 'my-purchases'
-                      ? 'bg-gray-100 text-gray-900'
-                      : 'text-gray-600 hover:text-gray-900'
-                  }`}
+                  className={`px-4 py-2 font-bold uppercase tracking-wide transition-all duration-200 border-2 ${currentView === 'my-purchases'
+                    ? 'bg-primary border-primary text-black shadow-neo-white'
+                    : 'bg-transparent border-transparent text-gray-400 hover:text-white hover:border-white'
+                    }`}
                 >
-                  <Package className="w-4 h-4 inline mr-1" />
-                  My Purchases
+                  <Package className="w-4 h-4 inline mr-2" />
+                  Purchases
                 </button>
 
                 {profile?.is_seller && (
                   <button
                     onClick={() => onNavigate('seller-dashboard')}
-                    className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
-                      currentView === 'seller-dashboard'
-                        ? 'bg-gray-100 text-gray-900'
-                        : 'text-gray-600 hover:text-gray-900'
-                    }`}
+                    className={`px-4 py-2 font-bold uppercase tracking-wide transition-all duration-200 border-2 ${currentView === 'seller-dashboard'
+                      ? 'bg-primary border-primary text-black shadow-neo-white'
+                      : 'bg-transparent border-transparent text-gray-400 hover:text-white hover:border-white'
+                      }`}
                   >
-                    <Store className="w-4 h-4 inline mr-1" />
-                    My Store
+                    <Store className="w-4 h-4 inline mr-2" />
+                    Store
                   </button>
                 )}
 
                 <button
                   onClick={() => onNavigate('transactions')}
-                  className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
-                    currentView === 'transactions'
-                      ? 'bg-gray-100 text-gray-900'
-                      : 'text-gray-600 hover:text-gray-900'
-                  }`}
+                  className={`px-4 py-2 font-bold uppercase tracking-wide transition-all duration-200 border-2 ${currentView === 'transactions'
+                    ? 'bg-primary border-primary text-black shadow-neo-white'
+                    : 'bg-transparent border-transparent text-gray-400 hover:text-white hover:border-white'
+                    }`}
                 >
                   Transactions
                 </button>
@@ -87,25 +85,25 @@ export default function Navbar({ currentView, onNavigate }: NavbarProps) {
             )}
           </div>
 
-          <div className="flex items-center space-x-3">
+          <div className="flex items-center space-x-4">
             {user ? (
               <>
                 {walletAddress ? (
                   <button
                     onClick={disconnectWallet}
-                    className="flex items-center space-x-2 px-4 py-2 bg-green-50 text-green-700 rounded-lg border border-green-200 hover:bg-green-100 transition-colors"
+                    className="flex items-center space-x-2 px-4 py-2 bg-black text-primary border-2 border-primary hover:bg-primary hover:text-black transition-all duration-200 shadow-neo"
                   >
                     <Wallet className="w-4 h-4" />
-                    <span className="text-sm font-medium">{formatAddress(walletAddress)}</span>
+                    <span className="text-sm font-bold font-mono">{formatAddress(walletAddress)}</span>
                   </button>
                 ) : (
                   <button
                     onClick={connectWallet}
                     disabled={isConnecting}
-                    className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50"
+                    className="neo-button-primary flex items-center space-x-2"
                   >
                     <Wallet className="w-4 h-4" />
-                    <span className="text-sm font-medium">
+                    <span className="text-sm font-bold uppercase">
                       {isConnecting ? 'Connecting...' : 'Connect Wallet'}
                     </span>
                   </button>
@@ -113,24 +111,25 @@ export default function Navbar({ currentView, onNavigate }: NavbarProps) {
 
                 <button
                   onClick={() => onNavigate('profile')}
-                  className={`p-2 rounded-lg hover:bg-gray-100 transition-colors ${
-                    currentView === 'profile' ? 'bg-gray-100' : ''
-                  }`}
+                  className={`p-2 border-2 transition-all duration-200 ${currentView === 'profile'
+                    ? 'bg-white text-black border-white'
+                    : 'bg-black text-white border-white hover:bg-white hover:text-black'
+                    }`}
                 >
-                  <User className="w-5 h-5 text-gray-700" />
+                  <User className="w-5 h-5" />
                 </button>
 
                 <button
                   onClick={handleSignOut}
-                  className="p-2 rounded-lg hover:bg-gray-100 transition-colors"
+                  className="p-2 border-2 border-red-500 text-red-500 hover:bg-red-500 hover:text-white transition-all duration-200"
                 >
-                  <LogOut className="w-5 h-5 text-gray-700" />
+                  <LogOut className="w-5 h-5" />
                 </button>
               </>
             ) : (
               <button
                 onClick={() => onNavigate('auth')}
-                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                className="neo-button-primary uppercase tracking-wide"
               >
                 Sign In
               </button>

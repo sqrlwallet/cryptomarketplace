@@ -1,3 +1,59 @@
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-background text-text-main font-mono antialiased;
+    background-image:
+      linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%),
+      linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+    background-size: 100% 2px, 3px 100%;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply font-sans tracking-tight font-bold uppercase;
+  }
+}
+
+@layer utilities {
+  .neo-card {
+    @apply bg-surface border-2 border-border-strong shadow-neo-white hover:shadow-neo-white-hover transition-all duration-200;
+  }
+
+  .neo-input {
+    @apply bg-black border-2 border-border-strong text-white p-3 focus:border-primary focus:shadow-neo outline-none transition-all placeholder-gray-600;
+  }
+
+  .neo-button {
+    @apply bg-surface border-2 border-white text-white font-bold px-6 py-2 hover:bg-white hover:text-black shadow-neo-white hover:shadow-none transition-all duration-200 active:translate-y-[2px];
+  }
+
+  .neo-button-primary {
+    @apply bg-primary border-2 border-primary text-black font-bold px-6 py-2 hover:bg-primary-hover hover:shadow-neo-white transition-all duration-200 active:translate-y-[2px];
+  }
+
+  /* Retro Scrollbar */
+  ::-webkit-scrollbar {
+    width: 12px;
+  }
+
+  ::-webkit-scrollbar-track {
+    @apply bg-surface border-l border-border-strong;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-primary border border-black;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-primary-hover;
+  }
+}

@@ -4,6 +4,8 @@ import { supabase, type Product, type Profile } from '../lib/supabase';
 import { useAuth } from '../contexts/AuthContext';
 import PaymentModal from './PaymentModal';
 
+import SEO from './SEO';
+
 interface UserProfilePageProps {
   username: string;
   onNavigate: (view: string, username?: string) => void;
@@ -95,47 +97,52 @@ export default function UserProfilePage({ username, onNavigate }: UserProfilePag
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-background">
+      <SEO
+        title={`${profile.username} | Seller Profile`}
+        description={`Check out ${profile.username}'s profile and products on Ripework.`}
+        type="profile"
+      />
       <div className="max-w-7xl mx-auto px-4 py-8">
         <button
           onClick={() => onNavigate('marketplace')}
-          className="mb-6 flex items-center space-x-2 text-gray-600 hover:text-gray-900 transition-colors"
+          className="mb-6 flex items-center space-x-2 text-gray-400 hover:text-primary transition-colors font-mono uppercase"
         >
           <ArrowLeft className="w-5 h-5" />
-          <span>Back to Marketplace</span>
+          <span>BACK_TO_MARKETPLACE</span>
         </button>
 
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-8 mb-8">
+        <div className="bg-surface border-2 border-white shadow-neo-white p-8 mb-8">
           <div className="flex items-start space-x-6">
-            <div className="w-24 h-24 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center flex-shrink-0">
-              <User className="w-12 h-12 text-white" />
+            <div className="w-24 h-24 bg-black border-2 border-white flex items-center justify-center flex-shrink-0 shadow-neo">
+              <User className="w-12 h-12 text-primary" />
             </div>
 
             <div className="flex-1">
-              <h1 className="text-3xl font-bold text-gray-900 mb-2">
+              <h1 className="text-3xl font-bold text-white mb-2 font-display uppercase glitch-text">
                 {profile.username}
               </h1>
 
               {profile.bio && (
-                <p className="text-gray-600 text-lg mb-4">
+                <p className="text-gray-400 text-lg mb-4 font-mono uppercase border-l-2 border-primary pl-4">
                   {profile.bio}
                 </p>
               )}
 
-              <div className="flex flex-wrap gap-4 text-sm text-gray-500">
+              <div className="flex flex-wrap gap-4 text-sm text-gray-500 font-mono uppercase">
                 {profile.wallet_address && (
                   <div className="flex items-center space-x-2">
-                    <Package className="w-4 h-4" />
-                    <span className="font-mono">
+                    <Package className="w-4 h-4 text-primary" />
+                    <span className="font-mono text-white">
                       {profile.wallet_address.slice(0, 10)}...{profile.wallet_address.slice(-8)}
                     </span>
                   </div>
                 )}
 
                 <div className="flex items-center space-x-2">
-                  <Calendar className="w-4 h-4" />
-                  <span>
-                    Joined {new Date(profile.created_at).toLocaleDateString('en-US', {
+                  <Calendar className="w-4 h-4 text-primary" />
+                  <span className="text-white">
+                    JOINED {new Date(profile.created_at).toLocaleDateString('en-US', {
                       month: 'long',
                       year: 'numeric'
                     })}
@@ -143,9 +150,9 @@ export default function UserProfilePage({ username, onNavigate }: UserProfilePag
                 </div>
 
                 <div className="flex items-center space-x-2">
-                  <ShoppingBag className="w-4 h-4" />
-                  <span>
-                    {products.length} {products.length === 1 ? 'Product' : 'Products'}
+                  <ShoppingBag className="w-4 h-4 text-primary" />
+                  <span className="text-white">
+                    {products.length} {products.length === 1 ? 'PRODUCT' : 'PRODUCTS'}
                   </span>
                 </div>
               </div>
@@ -153,17 +160,17 @@ export default function UserProfilePage({ username, onNavigate }: UserProfilePag
           </div>
         </div>
 
-        <div className="mb-6">
-          <h2 className="text-2xl font-bold text-gray-900">
-            Products by {profile.username}
+        <div className="mb-6 border-b-2 border-white pb-2">
+          <h2 className="text-2xl font-bold text-white font-display uppercase">
+            PRODUCTS_BY {profile.username}
           </h2>
         </div>
 
         {products.length === 0 ? (
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-12 text-center">
-            <ShoppingBag className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-            <h3 className="text-xl font-semibold text-gray-900 mb-2">No products yet</h3>
-            <p className="text-gray-600">
+          <div className="bg-surface border-2 border-white shadow-neo-white p-12 text-center">
+            <ShoppingBag className="w-16 h-16 text-gray-600 mx-auto mb-4" />
+            <h3 className="text-xl font-bold text-white mb-2 font-mono uppercase">NO_PRODUCTS_YET</h3>
+            <p className="text-gray-400 font-mono uppercase">
               This seller hasn't listed any products yet. Check back later!
             </p>
           </div>
@@ -172,32 +179,35 @@ export default function UserProfilePage({ username, onNavigate }: UserProfilePag
             {products.map((product) => (
               <div
                 key={product.id}
-                className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-lg transition-all hover:-translate-y-1 cursor-pointer"
+                className="neo-card group cursor-pointer"
                 onClick={() => handleProductClick(product)}
               >
                 {product.image_url ? (
-                  <img
-                    src={product.image_url}
-                    alt={product.title}
-                    className="w-full h-48 object-cover"
-                  />
+                  <div className="relative overflow-hidden border-b-2 border-white h-48">
+                    <img
+                      src={product.image_url}
+                      alt={product.title}
+                      className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-300"
+                    />
+                    <div className="absolute inset-0 bg-primary/10 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
+                  </div>
                 ) : (
-                  <div className="w-full h-48 bg-gradient-to-br from-blue-100 to-blue-200 flex items-center justify-center">
-                    <ShoppingBag className="w-12 h-12 text-blue-400" />
+                  <div className="w-full h-48 bg-black border-b-2 border-white flex items-center justify-center">
+                    <ShoppingBag className="w-12 h-12 text-gray-600 group-hover:text-primary transition-colors" />
                   </div>
                 )}
 
                 <div className="p-5">
                   <div className="flex items-start justify-between mb-3">
-                    <h3 className="font-semibold text-gray-900 text-lg flex-1">
+                    <h3 className="font-bold text-white text-lg flex-1 font-display uppercase truncate pr-2">
                       {product.title}
                     </h3>
-                    <span className="ml-2 text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded">
+                    <span className="ml-2 text-xs bg-primary text-black px-2 py-1 border-2 border-black font-bold uppercase shadow-neo-sm">
                       {product.type}
                     </span>
                   </div>
 
-                  <p className="text-gray-600 text-sm mb-4 line-clamp-3">
+                  <p className="text-gray-400 text-sm mb-4 line-clamp-3 font-mono uppercase">
                     {product.description}
                   </p>
 
@@ -205,28 +215,30 @@ export default function UserProfilePage({ username, onNavigate }: UserProfilePag
                     {product.tags.slice(0, 4).map((tag, i) => (
                       <span
                         key={i}
-                        className="text-xs bg-gray-100 text-gray-700 px-2 py-1 rounded"
+                        className="text-xs bg-black text-primary border border-primary px-2 py-1 font-mono uppercase"
                       >
                         {tag}
                       </span>
                     ))}
                   </div>
 
-                  <div className="flex items-center justify-between pt-4 border-t border-gray-100">
+                  <div className="flex items-center justify-between pt-4 border-t-2 border-white/20">
                     <div>
-                      <div className="text-2xl font-bold text-gray-900">
+                      <div className="text-2xl font-bold text-primary font-mono">
                         {product.price} {product.currency}
                       </div>
-                      <div className="text-xs text-gray-500 mt-1">
-                        +10% platform fee
+                      <div className="text-xs text-gray-500 mt-1 font-mono uppercase">
+                        +10% PLATFORM_FEE
                       </div>
                     </div>
                     <button
                       onClick={(e) => handleBuyClick(product, e)}
-                      className="flex items-center space-x-2 bg-blue-600 text-white px-5 py-2.5 rounded-lg hover:bg-blue-700 transition-colors"
+                      className="neo-button-primary px-4 py-2 text-sm"
                     >
-                      <ShoppingBag className="w-4 h-4" />
-                      <span>Buy</span>
+                      <div className="flex items-center space-x-2">
+                        <ShoppingBag className="w-4 h-4" />
+                        <span>BUY</span>
+                      </div>
                     </button>
                   </div>
                 </div>

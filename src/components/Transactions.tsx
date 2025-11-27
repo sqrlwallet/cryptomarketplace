@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Receipt, ExternalLink, TrendingUp, TrendingDown } from 'lucide-react';
 import { supabase, type Transaction } from '../lib/supabase';
 import { useAuth } from '../contexts/AuthContext';
+import SEO from './SEO';
 
 type TransactionWithProduct = Transaction & {
   products?: {
@@ -103,6 +104,10 @@ export default function Transactions() {
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">
+      <SEO
+        title="Transactions"
+        description="View your transaction history, purchases, and sales."
+      />
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-gray-900 mb-2">Transactions</h1>
         <p className="text-gray-600">Your purchase and sales history</p>
@@ -116,7 +121,7 @@ export default function Transactions() {
           </div>
           <div className="text-2xl font-bold text-gray-900">{stats.purchaseCount}</div>
           <div className="text-sm text-gray-500 mt-1">
-            {stats.totalSpent.toFixed(4)} ETH
+            {stats.totalSpent.toFixed(4)} USDC
           </div>
         </div>
 
@@ -127,7 +132,7 @@ export default function Transactions() {
           </div>
           <div className="text-2xl font-bold text-gray-900">{stats.salesCount}</div>
           <div className="text-sm text-gray-500 mt-1">
-            {stats.totalEarned.toFixed(4)} ETH
+            {stats.totalEarned.toFixed(4)} USDC
           </div>
         </div>
 
@@ -151,7 +156,7 @@ export default function Transactions() {
           <div className="text-2xl font-bold text-gray-900">
             {(stats.totalEarned - stats.totalSpent).toFixed(4)}
           </div>
-          <div className="text-sm text-gray-500 mt-1">ETH</div>
+          <div className="text-sm text-gray-500 mt-1">USDC</div>
         </div>
       </div>
 
@@ -159,31 +164,28 @@ export default function Transactions() {
         <div className="flex space-x-2">
           <button
             onClick={() => setFilter('all')}
-            className={`px-4 py-2 rounded-lg transition-colors ${
-              filter === 'all'
-                ? 'bg-blue-600 text-white'
-                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-            }`}
+            className={`px-4 py-2 rounded-lg transition-colors ${filter === 'all'
+              ? 'bg-blue-600 text-white'
+              : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+              }`}
           >
             All
           </button>
           <button
             onClick={() => setFilter('purchases')}
-            className={`px-4 py-2 rounded-lg transition-colors ${
-              filter === 'purchases'
-                ? 'bg-blue-600 text-white'
-                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-            }`}
+            className={`px-4 py-2 rounded-lg transition-colors ${filter === 'purchases'
+              ? 'bg-blue-600 text-white'
+              : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+              }`}
           >
             Purchases
           </button>
           <button
             onClick={() => setFilter('sales')}
-            className={`px-4 py-2 rounded-lg transition-colors ${
-              filter === 'sales'
-                ? 'bg-blue-600 text-white'
-                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-            }`}
+            className={`px-4 py-2 rounded-lg transition-colors ${filter === 'sales'
+              ? 'bg-blue-600 text-white'
+              : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+              }`}
           >
             Sales
           </button>
@@ -234,11 +236,10 @@ export default function Transactions() {
                     <tr key={tx.id} className="hover:bg-gray-50">
                       <td className="px-6 py-4 whitespace-nowrap">
                         <span
-                          className={`inline-flex items-center space-x-1 px-2.5 py-0.5 rounded text-xs font-medium ${
-                            type === 'purchase'
-                              ? 'bg-red-100 text-red-700'
-                              : 'bg-green-100 text-green-700'
-                          }`}
+                          className={`inline-flex items-center space-x-1 px-2.5 py-0.5 rounded text-xs font-medium ${type === 'purchase'
+                            ? 'bg-red-100 text-red-700'
+                            : 'bg-green-100 text-green-700'
+                            }`}
                         >
                           {type === 'purchase' ? (
                             <TrendingDown className="w-3 h-3" />
@@ -268,13 +269,12 @@ export default function Transactions() {
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <span
-                          className={`px-2.5 py-0.5 rounded text-xs font-medium ${
-                            tx.status === 'completed'
-                              ? 'bg-green-100 text-green-700'
-                              : tx.status === 'pending'
+                          className={`px-2.5 py-0.5 rounded text-xs font-medium ${tx.status === 'completed'
+                            ? 'bg-green-100 text-green-700'
+                            : tx.status === 'pending'
                               ? 'bg-yellow-100 text-yellow-700'
                               : 'bg-red-100 text-red-700'
-                          }`}
+                            }`}
                         >
                           {tx.status}
                         </span>
@@ -285,7 +285,7 @@ export default function Transactions() {
                       <td className="px-6 py-4 whitespace-nowrap">
                         {tx.transaction_hash ? (
                           <a
-                            href={`https://etherscan.io/tx/${tx.transaction_hash}`}
+                            href={`https://basescan.org/tx/${tx.transaction_hash}`}
                             target="_blank"
                             rel="noopener noreferrer"
                             className="inline-flex items-center space-x-1 text-blue-600 hover:text-blue-700 text-sm"

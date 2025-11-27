@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { ShoppingBag } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
+import SEO from './SEO';
 
 export default function Auth() {
   const [isSignUp, setIsSignUp] = useState(false);
@@ -35,103 +36,109 @@ export default function Auth() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center px-4">
+    <div className="min-h-[80vh] flex items-center justify-center px-4">
+      <SEO
+        title={isSignUp ? "Create Account" : "Sign In"}
+        description="Access your account to buy and sell premium digital assets on Ripework."
+      />
       <div className="max-w-md w-full">
-        <div className="text-center mb-8">
-          <div className="flex justify-center mb-4">
-            <div className="bg-blue-600 p-3 rounded-2xl">
-              <ShoppingBag className="w-10 h-10 text-white" />
+        <div className="text-center mb-8 animate-slide-up">
+          <div className="flex justify-center mb-6">
+            <div className="bg-primary border-2 border-black p-4 shadow-neo">
+              <ShoppingBag className="w-12 h-12 text-black" />
             </div>
           </div>
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">CryptoMarket</h1>
-          <p className="text-gray-600">
-            Decentralized marketplace for products and services
+          <h1 className="text-4xl font-bold font-display text-white mb-2 uppercase tracking-tighter">
+            Ripework
+          </h1>
+          <p className="text-gray-400 text-lg font-mono">
+            &gt;&gt; DECENTRALIZED_MARKETPLACE_INIT
           </p>
         </div>
 
-        <div className="bg-white rounded-2xl shadow-lg p-8">
-          <div className="mb-6">
-            <h2 className="text-2xl font-bold text-gray-900 mb-2">
+        <div className="bg-surface border-2 border-white p-8 shadow-neo-white animate-fade-in">
+          <div className="mb-8">
+            <h2 className="text-2xl font-bold text-white mb-2 font-display uppercase">
               {isSignUp ? 'Create Account' : 'Welcome Back'}
             </h2>
-            <p className="text-gray-600 text-sm">
+            <p className="text-gray-400 text-sm font-mono uppercase">
               {isSignUp
-                ? 'Join our marketplace to buy or sell'
-                : 'Sign in to access your account'}
+                ? '>> JOIN_MARKETPLACE_PROTOCOL'
+                : '>> AUTHENTICATE_USER_SESSION'}
             </p>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={handleSubmit} className="space-y-6">
             {isSignUp && (
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-bold text-gray-300 mb-2 font-mono uppercase">
                   Username
                 </label>
                 <input
                   type="text"
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
-                  placeholder="johndoe"
+                  className="w-full px-4 py-3 bg-black border-2 border-white text-white placeholder-gray-600 focus:border-primary focus:shadow-neo outline-none transition-all font-mono"
+                  placeholder="JOHNDOE"
                   required={isSignUp}
                 />
               </div>
             )}
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-bold text-gray-300 mb-2 font-mono uppercase">
                 Email
               </label>
               <input
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
-                placeholder="you@example.com"
+                className="w-full px-4 py-3 bg-black border-2 border-white text-white placeholder-gray-600 focus:border-primary focus:shadow-neo outline-none transition-all font-mono"
+                placeholder="USER@EXAMPLE.COM"
                 required
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-bold text-gray-300 mb-2 font-mono uppercase">
                 Password
               </label>
               <input
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
+                className="w-full px-4 py-3 bg-black border-2 border-white text-white placeholder-gray-600 focus:border-primary focus:shadow-neo outline-none transition-all font-mono"
                 placeholder="••••••••"
                 required
               />
             </div>
 
             {error && (
-              <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm">
-                {error}
+              <div className="bg-red-900/20 border-2 border-red-500 text-red-500 px-4 py-3 text-sm flex items-center font-mono font-bold uppercase">
+                <span className="mr-2">⚠️</span> {error}
               </div>
             )}
 
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-blue-600 text-white py-3 rounded-lg font-medium hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full bg-primary text-black border-2 border-primary py-3.5 font-bold hover:bg-white hover:border-white hover:text-black transition-all shadow-neo hover:shadow-neo-white disabled:opacity-50 disabled:cursor-not-allowed uppercase font-mono"
             >
-              {loading ? 'Loading...' : isSignUp ? 'Sign Up' : 'Sign In'}
+              {loading ? 'PROCESSING...' : isSignUp ? 'SIGN UP' : 'SIGN IN'}
             </button>
           </form>
 
-          <div className="mt-6 text-center">
+          <div className="mt-8 text-center pt-6 border-t-2 border-white/20">
             <button
               onClick={() => {
                 setIsSignUp(!isSignUp);
                 setError('');
               }}
-              className="text-blue-600 hover:text-blue-700 text-sm font-medium"
+              className="text-primary hover:text-white transition-colors text-sm font-bold font-mono uppercase"
             >
               {isSignUp
-                ? 'Already have an account? Sign In'
-                : "Don't have an account? Sign Up"}
+                ? '>> ALREADY_HAVE_ACCOUNT? SIGN_IN'
+                : ">> NO_ACCOUNT? SIGN_UP"}
             </button>
           </div>
         </div>
