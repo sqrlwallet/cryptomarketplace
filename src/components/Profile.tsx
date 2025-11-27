@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { User, Wallet, Save } from 'lucide-react';
+import { User, Wallet, Save, Copy, ExternalLink } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../contexts/AuthContext';
 import { useWallet } from '../contexts/WalletContext';
@@ -67,6 +67,16 @@ export default function Profile() {
     }
   };
 
+  const copyProfileLink = () => {
+    const url = `${window.location.origin}/${formData.username}`;
+    navigator.clipboard.writeText(url);
+    alert('Profile link copied to clipboard!');
+  };
+
+  const openProfilePage = () => {
+    window.open(`/${formData.username}`, '_blank');
+  };
+
   if (!user || !profile) {
     return (
       <div className="max-w-7xl mx-auto px-4 py-12 text-center">
@@ -108,6 +118,27 @@ export default function Profile() {
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
                 required
               />
+              <div className="flex items-center space-x-2 mt-2">
+                <p className="text-xs text-gray-500">
+                  Your profile: {window.location.origin}/{formData.username}
+                </p>
+                <button
+                  type="button"
+                  onClick={copyProfileLink}
+                  className="text-blue-600 hover:text-blue-700 p-1"
+                  title="Copy profile link"
+                >
+                  <Copy className="w-3.5 h-3.5" />
+                </button>
+                <button
+                  type="button"
+                  onClick={openProfilePage}
+                  className="text-blue-600 hover:text-blue-700 p-1"
+                  title="View profile page"
+                >
+                  <ExternalLink className="w-3.5 h-3.5" />
+                </button>
+              </div>
             </div>
 
             <div>

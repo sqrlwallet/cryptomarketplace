@@ -9,26 +9,42 @@ import Transactions from './components/Transactions';
 import Profile from './components/Profile';
 import MyPurchases from './components/MyPurchases';
 import ProductPage from './components/ProductPage';
+import UserProfilePage from './components/UserProfilePage';
 
 function AppContent() {
   const { user, loading } = useAuth();
   const [currentView, setCurrentView] = useState('marketplace');
   const [productLink, setProductLink] = useState<string | null>(null);
+  const [username, setUsername] = useState<string | null>(null);
 
   useEffect(() => {
+    const path = window.location.pathname;
     const params = new URLSearchParams(window.location.search);
     const product = params.get('product');
 
     if (product) {
       setProductLink(product);
       setCurrentView('product-page');
+    } else if (path.startsWith('/') && path.length > 1) {
+      const usernameFromPath = path.slice(1);
+      if (usernameFromPath) {
+        setUsername(usernameFromPath);
+        setCurrentView('user-profile');
+      }
     }
   }, []);
 
-  const handleNavigate = (view: string) => {
+  const handleNavigate = (view: string, usernameParam?: string) => {
     setCurrentView(view);
     setProductLink(null);
-    window.history.pushState({}, '', window.location.pathname);
+
+    if (view === 'user-profile' && usernameParam) {
+      setUsername(usernameParam);
+      window.history.pushState({}, '', `/${usernameParam}`);
+    } else {
+      setUsername(null);
+      window.history.pushState({}, '', window.location.pathname.split('?')[0]);
+    }
   };
 
   if (loading) {
@@ -44,7 +60,7 @@ function AppContent() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {currentView !== 'product-page' && (
+      {currentView !== 'product-page' && currentView !== 'user-profile' && (
         <Navbar currentView={currentView} onNavigate={handleNavigate} />
       )}
 
@@ -54,13 +70,16 @@ function AppContent() {
         {currentView === 'product-page' && productLink && (
           <ProductPage uniqueLink={productLink} onNavigate={handleNavigate} />
         )}
+        {currentView === 'user-profile' && username && (
+          <UserProfilePage username={username} onNavigate={handleNavigate} />
+        )}
         {currentView === 'my-purchases' && <MyPurchases />}
         {currentView === 'seller-dashboard' && <SellerDashboard />}
         {currentView === 'transactions' && <Transactions />}
         {currentView === 'profile' && <Profile />}
       </main>
 
-      {currentView !== 'product-page' && (
+      {currentView !== 'product-page' && currentView !== 'user-profile' && (
         <footer className="bg-white border-t border-gray-200 mt-16">
           <div className="max-w-7xl mx-auto px-4 py-8">
             <div className="text-center text-gray-600 text-sm">
