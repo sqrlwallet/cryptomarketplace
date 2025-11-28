@@ -15,6 +15,8 @@ export default function Auth({ onNavigate, message }: AuthProps) {
   const [username, setUsername] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [showVerificationMessage, setShowVerificationMessage] = useState(false);
+  const [registeredEmail, setRegisteredEmail] = useState('');
 
   const { signUp, signIn } = useAuth();
 
@@ -30,6 +32,8 @@ export default function Auth({ onNavigate, message }: AuthProps) {
           return;
         }
         await signUp(email, password, username);
+        setRegisteredEmail(email);
+        setShowVerificationMessage(true);
       } else {
         await signIn(email, password);
         onNavigate('marketplace');
@@ -40,6 +44,74 @@ export default function Auth({ onNavigate, message }: AuthProps) {
       setLoading(false);
     }
   };
+
+  if (showVerificationMessage) {
+    return (
+      <div className="min-h-[80vh] flex items-center justify-center px-4">
+        <SEO
+          title="Verify Your Email"
+          description="Check your email to verify your account."
+        />
+        <div className="max-w-lg w-full">
+          <div className="bg-surface border-2 border-white p-8 shadow-neo-white animate-fade-in">
+            <div className="text-center mb-6">
+              <div className="inline-flex items-center justify-center w-16 h-16 bg-primary border-2 border-black mb-4">
+                <span className="text-4xl">📧</span>
+              </div>
+              <h2 className="text-3xl font-bold text-white mb-2 font-display uppercase">
+                Check Your Email
+              </h2>
+              <p className="text-gray-400 font-mono uppercase text-sm">
+                &gt;&gt; VERIFICATION_EMAIL_SENT
+              </p>
+            </div>
+
+            <div className="bg-black border-2 border-white p-6 mb-6">
+              <p className="text-white font-mono text-sm mb-4">
+                We've sent a verification email to:
+              </p>
+              <p className="text-primary font-bold font-mono text-lg mb-4 break-all">
+                {registeredEmail}
+              </p>
+              <div className="border-t-2 border-white/20 pt-4 mt-4">
+                <p className="text-gray-300 font-mono text-xs mb-3">
+                  <span className="text-primary font-bold">1.</span> Check your inbox for the verification email
+                </p>
+                <p className="text-gray-300 font-mono text-xs mb-3">
+                  <span className="text-primary font-bold">2.</span> Click the verification link in the email
+                </p>
+                <p className="text-gray-300 font-mono text-xs mb-3">
+                  <span className="text-primary font-bold">3.</span> Come back and sign in
+                </p>
+              </div>
+            </div>
+
+            <div className="bg-red-900/20 border-2 border-red-500 p-4 mb-6">
+              <p className="text-red-500 font-mono text-xs font-bold uppercase flex items-start">
+                <span className="mr-2 mt-0.5">⚠️</span>
+                <span>
+                  Didn't receive the email? Check your spam folder. Some email providers may filter verification emails.
+                </span>
+              </p>
+            </div>
+
+            <button
+              onClick={() => {
+                setShowVerificationMessage(false);
+                setIsSignUp(false);
+                setEmail('');
+                setPassword('');
+                setUsername('');
+              }}
+              className="w-full bg-primary text-black border-2 border-primary py-3 font-bold hover:bg-white hover:border-white transition-all shadow-neo hover:shadow-neo-white uppercase font-mono"
+            >
+              &gt;&gt; BACK TO SIGN IN
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-[80vh] flex items-center justify-center px-4">
