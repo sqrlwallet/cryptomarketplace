@@ -67,7 +67,7 @@ function AppContent() {
         )}
 
         <main className="container mx-auto px-4 py-8">
-          {currentView === 'auth' && <Auth />}
+          {currentView === 'auth' && <Auth onNavigate={handleNavigate} />}
           {currentView === 'marketplace' && <Marketplace onNavigate={handleNavigate} />}
           {currentView === 'product-page' && productLink && (
             <ProductPage uniqueLink={productLink} onNavigate={handleNavigate} />

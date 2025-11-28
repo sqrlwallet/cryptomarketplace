@@ -80,6 +80,15 @@ export default function Transactions() {
     return { totalSpent, totalEarned, purchaseCount: purchases.length, salesCount: sales.length };
   };
 
+  const parseTransactionHash = (hashString: string) => {
+    const platformMatch = hashString.match(/Platform:\s*([^\s|]+)/);
+    const sellerMatch = hashString.match(/Seller:\s*([^\s|]+)/);
+    return {
+      platform: platformMatch ? platformMatch[1] : null,
+      seller: sellerMatch ? sellerMatch[1] : null,
+    };
+  };
+
   const stats = getTotalStats();
 
   if (loading) {
@@ -282,17 +291,41 @@ export default function Transactions() {
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
                         {formatDate(tx.created_at)}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
+                      <td className="px-6 py-4">
                         {tx.transaction_hash ? (
-                          <a
-                            href={`https://basescan.org/tx/${tx.transaction_hash}`}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="inline-flex items-center space-x-1 text-blue-600 hover:text-blue-700 text-sm"
-                          >
-                            <span className="font-mono">{formatAddress(tx.transaction_hash)}</span>
-                            <ExternalLink className="w-3 h-3" />
-                          </a>
+                          <div className="flex flex-col space-y-1">
+                            {(() => {
+                              const hashes = parseTransactionHash(tx.transaction_hash);
+                              return (
+                                <>
+                                  {hashes.platform && (
+                                    <a
+                                      href={`https://basescan.org/tx/${hashes.platform}`}
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                      className="inline-flex items-center space-x-1 text-blue-600 hover:text-blue-700 text-xs"
+                                    >
+                                      <span className="text-gray-500">Platform:</span>
+                                      <span className="font-mono">{formatAddress(hashes.platform)}</span>
+                                      <ExternalLink className="w-3 h-3" />
+                                    </a>
+                                  )}
+                                  {hashes.seller && (
+                                    <a
+                                      href={`https://basescan.org/tx/${hashes.seller}`}
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                      className="inline-flex items-center space-x-1 text-blue-600 hover:text-blue-700 text-xs"
+                                    >
+                                      <span className="text-gray-500">Seller:</span>
+                                      <span className="font-mono">{formatAddress(hashes.seller)}</span>
+                                      <ExternalLink className="w-3 h-3" />
+                                    </a>
+                                  )}
+                                </>
+                              );
+                            })()}
+                          </div>
                         ) : (
                           <span className="text-gray-400 text-sm">N/A</span>
                         )}

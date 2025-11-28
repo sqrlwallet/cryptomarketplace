@@ -3,7 +3,11 @@ import { ShoppingBag } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import SEO from './SEO';
 
-export default function Auth() {
+interface AuthProps {
+  onNavigate: (view: string) => void;
+}
+
+export default function Auth({ onNavigate }: AuthProps) {
   const [isSignUp, setIsSignUp] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -27,6 +31,7 @@ export default function Auth() {
         await signUp(email, password, username);
       } else {
         await signIn(email, password);
+        onNavigate('marketplace');
       }
     } catch (err: any) {
       setError(err.message || 'An error occurred');
