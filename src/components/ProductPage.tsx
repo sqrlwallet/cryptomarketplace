@@ -19,6 +19,8 @@ export default function ProductPage({ uniqueLink, onNavigate }: ProductPageProps
   const [sellerProfile, setSellerProfile] = useState<any>(null);
   const [secretText, setSecretText] = useState<string | null>(null);
   const [copiedSecret, setCopiedSecret] = useState(false);
+  const [galleryImages, setGalleryImages] = useState<Array<{ id: string; image_url: string; display_order: number }>>([]);
+  const [selectedImage, setSelectedImage] = useState<string>('');
 
   useEffect(() => {
     fetchProduct();
@@ -47,6 +49,17 @@ export default function ProductPage({ uniqueLink, onNavigate }: ProductPageProps
 
     setProduct(productData as any);
     setSellerProfile((productData as any).profiles);
+    setSelectedImage(productData.image_url || '');
+
+    const { data: galleryData } = await supabase
+      .from('product_images')
+      .select('*')
+      .eq('product_id', productData.id)
+      .order('display_order', { ascending: true });
+
+    if (galleryData) {
+      setGalleryImages(galleryData);
+    }
 
     if (user && profile?.wallet_address) {
       const { data: purchaseData } = await supabase
@@ -82,6 +95,14 @@ export default function ProductPage({ uniqueLink, onNavigate }: ProductPageProps
       setCopiedSecret(true);
       setTimeout(() => setCopiedSecret(false), 2000);
     }
+  };
+
+  const getYouTubeEmbedUrl = (url: string) => {
+    const videoIdMatch = url.match(/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/);
+    if (videoIdMatch && videoIdMatch[1]) {
+      return `https://www.youtube.com/embed/${videoIdMatch[1]}`;
+    }
+    return null;
   };
 
   if (loading) {
@@ -134,10 +155,10 @@ export default function ProductPage({ uniqueLink, onNavigate }: ProductPageProps
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
           <div>
-            <div className="bg-surface border-2 border-white p-2 mb-8 shadow-neo-white">
-              {product.image_url ? (
+            <div className="bg-surface border-2 border-white p-2 mb-4 shadow-neo-white">
+              {selectedImage ? (
                 <img
-                  src={product.image_url}
+                  src={selectedImage}
                   alt={product.title}
                   className="w-full h-96 object-cover filter grayscale hover:grayscale-0 transition-all duration-500"
                 />
@@ -147,6 +168,48 @@ export default function ProductPage({ uniqueLink, onNavigate }: ProductPageProps
                 </div>
               )}
             </div>
+
+            {(product.image_url || galleryImages.length > 0) && (
+              <div className="grid grid-cols-5 gap-2 mb-8">
+                {product.image_url && (
+                  <button
+                    onClick={() => setSelectedImage(product.image_url || '')}
+                    className={`border-2 ${selectedImage === product.image_url ? 'border-primary' : 'border-white'} hover:border-primary transition-colors overflow-hidden`}
+                  >
+                    <img
+                      src={product.image_url}
+                      alt="Cover"
+                      className="w-full h-20 object-cover filter grayscale hover:grayscale-0 transition-all"
+                    />
+                  </button>
+                )}
+                {galleryImages.map((img) => (
+                  <button
+                    key={img.id}
+                    onClick={() => setSelectedImage(img.image_url)}
+                    className={`border-2 ${selectedImage === img.image_url ? 'border-primary' : 'border-white'} hover:border-primary transition-colors overflow-hidden`}
+                  >
+                    <img
+                      src={img.image_url}
+                      alt={`Gallery ${img.display_order + 1}`}
+                      className="w-full h-20 object-cover filter grayscale hover:grayscale-0 transition-all"
+                    />
+                  </button>
+                ))}
+              </div>
+            )}
+
+            {(product as any).youtube_url && getYouTubeEmbedUrl((product as any).youtube_url) && (
+              <div className="bg-black border-2 border-white p-2 mb-8 shadow-neo">
+                <iframe
+                  src={getYouTubeEmbedUrl((product as any).youtube_url) || ''}
+                  title="Product Video"
+                  className="w-full h-80"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                />
+              </div>
+            )}
 
             {(product as any).has_files && (
               <div className="bg-black p-6 border-2 border-primary shadow-neo">

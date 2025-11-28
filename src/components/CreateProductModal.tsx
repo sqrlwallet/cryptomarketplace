@@ -20,6 +20,9 @@ export default function CreateProductModal({ product, onClose }: CreateProductMo
   const [productImage, setProductImage] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string>('');
   const imageInputRef = useRef<HTMLInputElement>(null);
+  const [galleryImages, setGalleryImages] = useState<File[]>([]);
+  const [galleryPreviews, setGalleryPreviews] = useState<string[]>([]);
+  const galleryInputRef = useRef<HTMLInputElement>(null);
 
   const [formData, setFormData] = useState({
     title: '',
@@ -33,6 +36,7 @@ export default function CreateProductModal({ product, onClose }: CreateProductMo
     image_url: '',
     has_files: false,
     secret_text: '',
+    youtube_url: '',
   });
 
   useEffect(() => {
@@ -49,6 +53,7 @@ export default function CreateProductModal({ product, onClose }: CreateProductMo
         image_url: product.image_url || '',
         has_files: (product as any).has_files || false,
         secret_text: (product as any).secret_text || '',
+        youtube_url: (product as any).youtube_url || '',
       });
       if (product.image_url) {
         setImagePreview(product.image_url);
@@ -87,6 +92,40 @@ export default function CreateProductModal({ product, onClose }: CreateProductMo
     }
   };
 
+  const handleGallerySelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || []);
+    const validFiles: File[] = [];
+    const previews: string[] = [];
+
+    for (const file of files) {
+      if (!file.type.startsWith('image/')) {
+        setError('All files must be images');
+        return;
+      }
+      if (file.size > 5 * 1024 * 1024) {
+        setError('Each image must be less than 5MB');
+        return;
+      }
+      validFiles.push(file);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        previews.push(reader.result as string);
+        if (previews.length === validFiles.length) {
+          setGalleryPreviews(prev => [...prev, ...previews]);
+        }
+      };
+      reader.readAsDataURL(file);
+    }
+
+    setGalleryImages(prev => [...prev, ...validFiles]);
+    setError('');
+  };
+
+  const removeGalleryImage = (index: number) => {
+    setGalleryImages(prev => prev.filter((_, i) => i !== index));
+    setGalleryPreviews(prev => prev.filter((_, i) => i !== index));
+  };
+
   const generateUniqueLink = () => {
     const slug = formData.title
       .toLowerCase()
@@ -116,6 +155,35 @@ export default function CreateProductModal({ product, onClose }: CreateProductMo
       .getPublicUrl(filePath);
 
     return data.publicUrl;
+  };
+
+  const uploadGalleryImages = async (productId: string) => {
+    if (galleryImages.length === 0) return;
+
+    for (let i = 0; i < galleryImages.length; i++) {
+      const file = galleryImages[i];
+      const fileExt = file.name.split('.').pop();
+      const fileName = `gallery_${Date.now()}_${i}.${fileExt}`;
+      const filePath = `${user!.id}/${productId}/${fileName}`;
+
+      const { error: uploadError } = await supabase.storage
+        .from('product-images')
+        .upload(filePath, file);
+
+      if (uploadError) throw uploadError;
+
+      const { data } = supabase.storage
+        .from('product-images')
+        .getPublicUrl(filePath);
+
+      await supabase
+        .from('product_images')
+        .insert({
+          product_id: productId,
+          image_url: data.publicUrl,
+          display_order: i,
+        });
+    }
   };
 
   const uploadFiles = async (productId: string) => {
@@ -223,6 +291,7 @@ export default function CreateProductModal({ product, onClose }: CreateProductMo
         has_files: selectedFiles.length > 0,
         file_count: selectedFiles.length,
         secret_text: formData.secret_text || null,
+        youtube_url: formData.youtube_url || null,
       };
 
       const { error: updateError } = await supabase
@@ -231,6 +300,10 @@ export default function CreateProductModal({ product, onClose }: CreateProductMo
         .eq('id', productId);
 
       if (updateError) throw updateError;
+
+      if (galleryImages.length > 0) {
+        await uploadGalleryImages(productId);
+      }
 
       if (selectedFiles.length > 0) {
         await uploadFiles(productId);
@@ -390,7 +463,7 @@ export default function CreateProductModal({ product, onClose }: CreateProductMo
 
           <div>
             <label className="block text-sm font-bold text-gray-400 mb-3 font-mono uppercase">
-              Product Image
+              Cover Image
             </label>
             {imagePreview ? (
               <div className="relative">
@@ -414,7 +487,7 @@ export default function CreateProductModal({ product, onClose }: CreateProductMo
               >
                 <Upload className="w-12 h-12 text-gray-600 group-hover:text-primary mx-auto mb-3 transition-colors" />
                 <p className="text-gray-400 font-bold mb-1 font-mono uppercase group-hover:text-primary transition-colors">
-                  CLICK_TO_UPLOAD_IMAGE
+                  CLICK_TO_UPLOAD_COVER
                 </p>
                 <p className="text-sm text-gray-600 font-mono uppercase">
                   PNG, JPG, GIF UP TO 5MB
@@ -428,6 +501,71 @@ export default function CreateProductModal({ product, onClose }: CreateProductMo
                 />
               </div>
             )}
+          </div>
+
+          <div>
+            <label className="block text-sm font-bold text-gray-400 mb-3 font-mono uppercase">
+              Additional Images (Optional)
+            </label>
+            <p className="text-xs text-gray-500 mb-3 font-mono uppercase">
+              &gt;&gt; ADD_MORE_PRODUCT_IMAGES
+            </p>
+            {galleryPreviews.length > 0 && (
+              <div className="grid grid-cols-3 gap-2 mb-3">
+                {galleryPreviews.map((preview, index) => (
+                  <div key={index} className="relative">
+                    <img
+                      src={preview}
+                      alt={`Gallery ${index + 1}`}
+                      className="w-full h-24 object-cover border-2 border-white filter grayscale"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => removeGalleryImage(index)}
+                      className="absolute top-1 right-1 p-1 bg-red-500 text-black border border-black hover:bg-red-400 transition-colors"
+                    >
+                      <X className="w-3 h-3" />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+            <div
+              onClick={() => galleryInputRef.current?.click()}
+              className="border-2 border-dashed border-gray-600 p-6 text-center cursor-pointer hover:border-primary hover:bg-primary/10 transition-colors group"
+            >
+              <Upload className="w-8 h-8 text-gray-600 group-hover:text-primary mx-auto mb-2 transition-colors" />
+              <p className="text-gray-400 text-sm font-bold mb-1 font-mono uppercase group-hover:text-primary transition-colors">
+                ADD_GALLERY_IMAGES
+              </p>
+              <p className="text-xs text-gray-600 font-mono uppercase">
+                MULTIPLE_IMAGES_SUPPORTED
+              </p>
+              <input
+                ref={galleryInputRef}
+                type="file"
+                accept="image/*"
+                multiple
+                onChange={handleGallerySelect}
+                className="hidden"
+              />
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-sm font-bold text-gray-400 mb-1 font-mono uppercase">
+              YouTube Video URL (Optional)
+            </label>
+            <p className="text-xs text-gray-500 mb-3 font-mono uppercase">
+              &gt;&gt; SHOWCASE_YOUR_PRODUCT_WITH_VIDEO
+            </p>
+            <input
+              type="url"
+              value={formData.youtube_url}
+              onChange={(e) => setFormData({ ...formData, youtube_url: e.target.value })}
+              className="w-full px-4 py-2 bg-black border-2 border-white text-white placeholder-gray-600 focus:border-primary focus:shadow-neo outline-none font-mono"
+              placeholder="https://youtube.com/watch?v=..."
+            />
           </div>
 
           <div className="border-t-2 border-white/20 pt-5">
