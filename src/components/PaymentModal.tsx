@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { X, Wallet, AlertCircle, CheckCircle } from 'lucide-react';
 import { supabase, type Product } from '../lib/supabase';
 import { useWallet } from '../contexts/WalletContext';
+import { useAuth } from '../contexts/AuthContext';
 import { PLATFORM_FEE_WALLET, getCurrencyConfig, formatCurrencyAmount } from '../lib/currencies';
 
 interface PaymentModalProps {
@@ -11,6 +12,7 @@ interface PaymentModalProps {
 
 export default function PaymentModal({ product, onClose }: PaymentModalProps) {
   const { walletAddress } = useWallet();
+  const { user } = useAuth();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
@@ -161,6 +163,17 @@ export default function PaymentModal({ product, onClose }: PaymentModalProps) {
       }
 
       setStep('complete');
+
+      if (user) {
+        const { error: profileError } = await supabase
+          .from('profiles')
+          .update({ wallet_address: walletAddress })
+          .eq('id', user.id);
+
+        if (profileError) {
+          console.error('Failed to update wallet address:', profileError);
+        }
+      }
 
       const { data: transactionData, error: dbError } = await supabase
         .from('transactions')
