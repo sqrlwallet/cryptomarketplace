@@ -10,6 +10,7 @@ import Profile from './components/Profile';
 import MyPurchases from './components/MyPurchases';
 import ProductPage from './components/ProductPage';
 import UserProfilePage from './components/UserProfilePage';
+import Tutorial from './components/Tutorial';
 function AppContent() {
   const { loading } = useAuth();
   const [currentView, setCurrentView] = useState('marketplace');
@@ -27,7 +28,7 @@ function AppContent() {
     } else if (path.startsWith('/') && path.length > 1) {
       const usernameFromPath = path.slice(1);
       // Exclude known routes/views to prevent conflicts
-      const knownRoutes = ['auth', 'marketplace', 'my-purchases', 'seller-dashboard', 'transactions', 'profile'];
+      const knownRoutes = ['auth', 'marketplace', 'my-purchases', 'seller-dashboard', 'transactions', 'profile', 'tutorial'];
       if (usernameFromPath && !knownRoutes.includes(usernameFromPath)) {
         setUsername(usernameFromPath);
         setCurrentView('user-profile');
@@ -79,6 +80,7 @@ function AppContent() {
           {currentView === 'seller-dashboard' && <SellerDashboard />}
           {currentView === 'transactions' && <Transactions />}
           {currentView === 'profile' && <Profile />}
+          {currentView === 'tutorial' && <Tutorial />}
         </main>
 
         {currentView !== 'product-page' && currentView !== 'user-profile' && (
@@ -86,7 +88,14 @@ function AppContent() {
             <div className="max-w-7xl mx-auto px-4 py-8">
               <div className="text-center text-gray-400 text-sm">
                 <p className="mb-2 font-display font-bold text-lg text-primary uppercase tracking-widest">Ripework</p>
-
+                <div className="flex justify-center space-x-6 mt-4">
+                  <button
+                    onClick={() => handleNavigate('tutorial')}
+                    className="hover:text-white transition-colors uppercase tracking-wider font-bold"
+                  >
+                    Tutorial
+                  </button>
+                </div>
               </div>
             </div>
           </footer>
