@@ -61,6 +61,14 @@ export default function ProductPage({ uniqueLink, onNavigate }: ProductPageProps
       setGalleryImages(galleryData);
     }
 
+    // Track product view
+    await supabase
+      .from('product_views')
+      .insert({
+        product_id: productData.id,
+        viewer_id: user?.id || null,
+      });
+
     if (user && profile?.wallet_address) {
       const { data: purchaseData } = await supabase
         .from('purchase_access')
