@@ -90,7 +90,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const signOut = async () => {
     const { error } = await supabase.auth.signOut();
-    if (error) throw error;
+    if (error && error.message !== 'Auth session missing!') {
+      throw error;
+    }
+    setUser(null);
     setProfile(null);
   };
 
