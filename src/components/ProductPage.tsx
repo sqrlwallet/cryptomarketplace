@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { ArrowLeft, ShoppingBag, Package, Shield, CheckCircle } from 'lucide-react';
+import { ArrowLeft, ShoppingBag, Package, Shield, CheckCircle, Eye, Copy } from 'lucide-react';
 import { supabase, type Product } from '../lib/supabase';
 import { useAuth } from '../contexts/AuthContext';
 import SEO from './SEO';
@@ -17,6 +17,8 @@ export default function ProductPage({ uniqueLink, onNavigate }: ProductPageProps
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [hasPurchased, setHasPurchased] = useState(false);
   const [sellerProfile, setSellerProfile] = useState<any>(null);
+  const [secretText, setSecretText] = useState<string | null>(null);
+  const [copiedSecret, setCopiedSecret] = useState(false);
 
   useEffect(() => {
     fetchProduct();
@@ -54,7 +56,13 @@ export default function ProductPage({ uniqueLink, onNavigate }: ProductPageProps
         .eq('buyer_wallet', profile.wallet_address)
         .maybeSingle();
 
-      setHasPurchased(!!purchaseData);
+      if (purchaseData) {
+        setHasPurchased(true);
+
+        if ((productData as any).secret_text) {
+          setSecretText((productData as any).secret_text);
+        }
+      }
     }
 
     setLoading(false);
@@ -66,6 +74,14 @@ export default function ProductPage({ uniqueLink, onNavigate }: ProductPageProps
       return;
     }
     setShowPaymentModal(true);
+  };
+
+  const copySecretText = () => {
+    if (secretText) {
+      navigator.clipboard.writeText(secretText);
+      setCopiedSecret(true);
+      setTimeout(() => setCopiedSecret(false), 2000);
+    }
   };
 
   if (loading) {
@@ -186,25 +202,57 @@ export default function ProductPage({ uniqueLink, onNavigate }: ProductPageProps
               </p>
 
               {hasPurchased ? (
-                <div className="bg-emerald-900/20 border-2 border-emerald-500 p-6 mb-4">
-                  <div className="flex items-center space-x-4 mb-4">
-                    <div className="p-2 bg-emerald-500 border-2 border-black">
-                      <CheckCircle className="w-6 h-6 text-black" />
+                <>
+                  <div className="bg-emerald-900/20 border-2 border-emerald-500 p-6 mb-4">
+                    <div className="flex items-center space-x-4 mb-4">
+                      <div className="p-2 bg-emerald-500 border-2 border-black">
+                        <CheckCircle className="w-6 h-6 text-black" />
+                      </div>
+                      <div>
+                        <p className="font-bold text-emerald-400 text-lg font-mono uppercase">Already Purchased</p>
+                        <p className="text-sm text-emerald-300/80 font-mono">
+                          &gt;&gt; CHECK_MY_PURCHASES
+                        </p>
+                      </div>
                     </div>
-                    <div>
-                      <p className="font-bold text-emerald-400 text-lg font-mono uppercase">Already Purchased</p>
-                      <p className="text-sm text-emerald-300/80 font-mono">
-                        &gt;&gt; CHECK_MY_PURCHASES
-                      </p>
-                    </div>
+                    <button
+                      onClick={() => onNavigate('my-purchases')}
+                      className="w-full px-6 py-4 bg-emerald-500 text-black border-2 border-emerald-500 hover:bg-emerald-400 transition-all font-bold uppercase shadow-neo"
+                    >
+                      View My Purchases
+                    </button>
                   </div>
-                  <button
-                    onClick={() => onNavigate('my-purchases')}
-                    className="w-full px-6 py-4 bg-emerald-500 text-black border-2 border-emerald-500 hover:bg-emerald-400 transition-all font-bold uppercase shadow-neo"
-                  >
-                    View My Purchases
-                  </button>
-                </div>
+
+                  {secretText && (
+                    <div className="bg-primary/10 border-2 border-primary p-6">
+                      <div className="flex items-start space-x-3 mb-4">
+                        <div className="p-2 bg-primary border-2 border-black flex-shrink-0">
+                          <Eye className="w-5 h-5 text-black" />
+                        </div>
+                        <div className="flex-1">
+                          <p className="font-bold text-primary text-sm font-mono uppercase mb-1">
+                            Secret Content Unlocked
+                          </p>
+                          <p className="text-xs text-gray-400 font-mono uppercase">
+                            &gt;&gt; EXCLUSIVE_ACCESS_GRANTED
+                          </p>
+                        </div>
+                      </div>
+                      <div className="bg-black border-2 border-primary p-4 mb-3">
+                        <p className="text-white font-mono text-sm whitespace-pre-wrap break-words">
+                          {secretText}
+                        </p>
+                      </div>
+                      <button
+                        onClick={copySecretText}
+                        className="w-full px-4 py-2 bg-primary text-black border-2 border-primary hover:bg-white hover:border-white transition-all font-bold uppercase font-mono flex items-center justify-center space-x-2"
+                      >
+                        <Copy className="w-4 h-4" />
+                        <span>{copiedSecret ? 'Copied!' : 'Copy to Clipboard'}</span>
+                      </button>
+                    </div>
+                  )}
+                </>
               ) : (
                 <button
                   onClick={handleBuyClick}

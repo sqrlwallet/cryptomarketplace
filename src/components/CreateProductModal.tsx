@@ -32,6 +32,7 @@ export default function CreateProductModal({ product, onClose }: CreateProductMo
     tags: '',
     image_url: '',
     has_files: false,
+    secret_text: '',
   });
 
   useEffect(() => {
@@ -47,6 +48,7 @@ export default function CreateProductModal({ product, onClose }: CreateProductMo
         tags: product.tags.join(', '),
         image_url: product.image_url || '',
         has_files: (product as any).has_files || false,
+        secret_text: (product as any).secret_text || '',
       });
       if (product.image_url) {
         setImagePreview(product.image_url);
@@ -220,6 +222,7 @@ export default function CreateProductModal({ product, onClose }: CreateProductMo
         is_active: true,
         has_files: selectedFiles.length > 0,
         file_count: selectedFiles.length,
+        secret_text: formData.secret_text || null,
       };
 
       const { error: updateError } = await supabase
@@ -425,6 +428,22 @@ export default function CreateProductModal({ product, onClose }: CreateProductMo
                 />
               </div>
             )}
+          </div>
+
+          <div className="border-t-2 border-white/20 pt-5">
+            <label className="block text-sm font-bold text-gray-400 mb-1 font-mono uppercase">
+              Secret Text (Optional)
+            </label>
+            <p className="text-xs text-gray-500 mb-3 font-mono uppercase">
+              &gt;&gt; REVEALED_ONLY_TO_BUYERS_AFTER_PURCHASE
+            </p>
+            <textarea
+              value={formData.secret_text}
+              onChange={(e) => setFormData({ ...formData, secret_text: e.target.value })}
+              className="w-full px-4 py-2 bg-black border-2 border-white text-white placeholder-gray-600 focus:border-primary focus:shadow-neo outline-none resize-none font-mono"
+              placeholder="ENTER_SECRET_LINKS, CODES, OR_INSTRUCTIONS..."
+              rows={4}
+            />
           </div>
 
           <div className="border-t-2 border-white/20 pt-5">
