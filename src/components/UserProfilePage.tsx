@@ -113,7 +113,7 @@ export default function UserProfilePage({ username, onNavigate }: UserProfilePag
         {/* Banner */}
         <div className="h-64 w-full relative overflow-hidden border-2 border-white shadow-neo-white group">
           <img
-            src="/profile-banner.png"
+            src={profile.cover_image_url || "/profile-banner.png"}
             alt="Profile Banner"
             className="w-full h-full object-cover"
           />
@@ -125,7 +125,15 @@ export default function UserProfilePage({ username, onNavigate }: UserProfilePag
           <div className="flex flex-col md:flex-row items-end gap-6">
             <div className="bg-black border-2 border-white p-1 shadow-neo">
               <div className="w-40 h-40 bg-surface flex items-center justify-center border-2 border-white relative overflow-hidden group">
-                <User className="w-20 h-20 text-primary relative z-10" />
+                {profile.profile_picture_url ? (
+                  <img
+                    src={profile.profile_picture_url}
+                    alt={`${profile.username}'s profile`}
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <User className="w-20 h-20 text-primary relative z-10" />
+                )}
                 <div className="absolute inset-0 bg-primary/10 group-hover:bg-primary/20 transition-colors"></div>
               </div>
             </div>

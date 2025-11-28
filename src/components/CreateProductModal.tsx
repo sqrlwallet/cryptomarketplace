@@ -30,7 +30,7 @@ export default function CreateProductModal({ product, onClose }: CreateProductMo
     type: 'product' as 'product' | 'service',
     price: '',
     currency: 'USDC',
-    seller_wallet: walletAddress || '',
+    seller_wallet: profile?.wallet_address || walletAddress || '',
     unique_link: '',
     tags: '',
     image_url: '',
@@ -58,10 +58,14 @@ export default function CreateProductModal({ product, onClose }: CreateProductMo
       if (product.image_url) {
         setImagePreview(product.image_url);
       }
-    } else if (walletAddress) {
-      setFormData(prev => ({ ...prev, seller_wallet: walletAddress }));
+    } else {
+      // Auto-populate wallet address from profile or connected wallet
+      const walletAddr = profile?.wallet_address || walletAddress || '';
+      if (walletAddr && !formData.seller_wallet) {
+        setFormData(prev => ({ ...prev, seller_wallet: walletAddr }));
+      }
     }
-  }, [product, walletAddress]);
+  }, [product, walletAddress, profile]);
 
   const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];

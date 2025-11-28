@@ -11,6 +11,8 @@ export type Profile = {
   username: string;
   bio: string;
   is_seller: boolean;
+  profile_picture_url: string | null;
+  cover_image_url: string | null;
   created_at: string;
   updated_at: string;
 };
