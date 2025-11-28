@@ -15,8 +15,27 @@ export default function Auth({ onNavigate, message }: AuthProps) {
   const [username, setUsername] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [showVerificationMessage, setShowVerificationMessage] = useState(false);
+  const [registeredEmail, setRegisteredEmail] = useState('');
 
   const { signUp, signIn } = useAuth();
+
+  const getPasswordStrength = (pwd: string) => {
+    if (!pwd) return { strength: 0, label: '', color: '' };
+
+    let strength = 0;
+    if (pwd.length >= 8) strength++;
+    if (pwd.length >= 12) strength++;
+    if (/[a-z]/.test(pwd) && /[A-Z]/.test(pwd)) strength++;
+    if (/\d/.test(pwd)) strength++;
+    if (/[^a-zA-Z0-9]/.test(pwd)) strength++;
+
+    if (strength <= 1) return { strength: 1, label: 'WEAK', color: 'bg-red-500' };
+    if (strength <= 3) return { strength: 2, label: 'MEDIUM', color: 'bg-yellow-500' };
+    return { strength: 3, label: 'STRONG', color: 'bg-green-500' };
+  };
+
+  const passwordStrength = getPasswordStrength(password);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -30,6 +49,8 @@ export default function Auth({ onNavigate, message }: AuthProps) {
           return;
         }
         await signUp(email, password, username);
+        setRegisteredEmail(email);
+        setShowVerificationMessage(true);
       } else {
         await signIn(email, password);
         onNavigate('marketplace');
@@ -40,6 +61,74 @@ export default function Auth({ onNavigate, message }: AuthProps) {
       setLoading(false);
     }
   };
+
+  if (showVerificationMessage) {
+    return (
+      <div className="min-h-[80vh] flex items-center justify-center px-4">
+        <SEO
+          title="Verify Your Email"
+          description="Check your email to verify your account."
+        />
+        <div className="max-w-lg w-full">
+          <div className="bg-surface border-2 border-white p-8 shadow-neo-white animate-fade-in">
+            <div className="text-center mb-6">
+              <div className="inline-flex items-center justify-center w-16 h-16 bg-primary border-2 border-black mb-4">
+                <span className="text-4xl">📧</span>
+              </div>
+              <h2 className="text-3xl font-bold text-white mb-2 font-display uppercase">
+                Check Your Email
+              </h2>
+              <p className="text-gray-400 font-mono uppercase text-sm">
+                &gt;&gt; VERIFICATION_EMAIL_SENT
+              </p>
+            </div>
+
+            <div className="bg-black border-2 border-white p-6 mb-6">
+              <p className="text-white font-mono text-sm mb-4">
+                We've sent a verification email to:
+              </p>
+              <p className="text-primary font-bold font-mono text-lg mb-4 break-all">
+                {registeredEmail}
+              </p>
+              <div className="border-t-2 border-white/20 pt-4 mt-4">
+                <p className="text-gray-300 font-mono text-xs mb-3">
+                  <span className="text-primary font-bold">1.</span> Check your inbox for the verification email
+                </p>
+                <p className="text-gray-300 font-mono text-xs mb-3">
+                  <span className="text-primary font-bold">2.</span> Click the verification link in the email
+                </p>
+                <p className="text-gray-300 font-mono text-xs mb-3">
+                  <span className="text-primary font-bold">3.</span> Come back and sign in
+                </p>
+              </div>
+            </div>
+
+            <div className="bg-red-900/20 border-2 border-red-500 p-4 mb-6">
+              <p className="text-red-500 font-mono text-xs font-bold uppercase flex items-start">
+                <span className="mr-2 mt-0.5">⚠️</span>
+                <span>
+                  Didn't receive the email? Check your spam folder. Some email providers may filter verification emails.
+                </span>
+              </p>
+            </div>
+
+            <button
+              onClick={() => {
+                setShowVerificationMessage(false);
+                setIsSignUp(false);
+                setEmail('');
+                setPassword('');
+                setUsername('');
+              }}
+              className="w-full bg-primary text-black border-2 border-primary py-3 font-bold hover:bg-white hover:border-white transition-all shadow-neo hover:shadow-neo-white uppercase font-mono"
+            >
+              &gt;&gt; BACK TO SIGN IN
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-[80vh] flex items-center justify-center px-4">
@@ -120,7 +209,45 @@ export default function Auth({ onNavigate, message }: AuthProps) {
                 className="w-full px-4 py-3 bg-black border-2 border-white text-white placeholder-gray-600 focus:border-primary focus:shadow-neo outline-none transition-all font-mono"
                 placeholder="••••••••"
                 required
+                minLength={8}
               />
+
+              {isSignUp && password && (
+                <div className="mt-3">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-xs font-bold font-mono uppercase text-gray-400">
+                      PASSWORD STRENGTH:
+                    </span>
+                    <span className={`text-xs font-bold font-mono uppercase ${
+                      passwordStrength.strength === 1 ? 'text-red-500' :
+                      passwordStrength.strength === 2 ? 'text-yellow-500' :
+                      'text-green-500'
+                    }`}>
+                      {passwordStrength.label}
+                    </span>
+                  </div>
+                  <div className="h-2 bg-black border-2 border-white overflow-hidden">
+                    <div
+                      className={`h-full transition-all duration-300 ${passwordStrength.color}`}
+                      style={{ width: `${(passwordStrength.strength / 3) * 100}%` }}
+                    ></div>
+                  </div>
+                  <div className="mt-2 space-y-1">
+                    <p className={`text-xs font-mono ${password.length >= 8 ? 'text-green-500' : 'text-gray-500'}`}>
+                      {password.length >= 8 ? '✓' : '○'} At least 8 characters
+                    </p>
+                    <p className={`text-xs font-mono ${/[A-Z]/.test(password) && /[a-z]/.test(password) ? 'text-green-500' : 'text-gray-500'}`}>
+                      {/[A-Z]/.test(password) && /[a-z]/.test(password) ? '✓' : '○'} Upper & lowercase letters
+                    </p>
+                    <p className={`text-xs font-mono ${/\d/.test(password) ? 'text-green-500' : 'text-gray-500'}`}>
+                      {/\d/.test(password) ? '✓' : '○'} At least one number
+                    </p>
+                    <p className={`text-xs font-mono ${/[^a-zA-Z0-9]/.test(password) ? 'text-green-500' : 'text-gray-500'}`}>
+                      {/[^a-zA-Z0-9]/.test(password) ? '✓' : '○'} Special character (!@#$%^&*)
+                    </p>
+                  </div>
+                </div>
+              )}
             </div>
 
             {error && (
