@@ -109,60 +109,75 @@ export default function UserProfilePage({ username, onNavigate }: UserProfilePag
       />
 
       {/* Profile Header */}
-      <div className="bg-surface border-2 border-white shadow-neo-white mb-12 overflow-hidden">
-        <div className="bg-primary h-32 border-b-2 border-white relative overflow-hidden">
-          <div className="absolute inset-0 opacity-20" style={{ backgroundImage: 'linear-gradient(45deg, #000 25%, transparent 25%, transparent 75%, #000 75%, #000), linear-gradient(45deg, #000 25%, transparent 25%, transparent 75%, #000 75%, #000)', backgroundSize: '20px 20px', backgroundPosition: '0 0, 10px 10px' }}></div>
+      <div className="relative mb-12">
+        {/* Banner */}
+        <div className="h-64 w-full relative overflow-hidden border-2 border-white shadow-neo-white group">
+          <img
+            src="/profile-banner.png"
+            alt="Profile Banner"
+            className="w-full h-full object-cover"
+          />
+          <div className="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors duration-300"></div>
         </div>
 
-        <div className="px-8 pb-8">
-          <div className="flex flex-col md:flex-row items-start md:items-end -mt-12 mb-6 gap-6">
+        {/* Profile Info Overlay */}
+        <div className="max-w-7xl mx-auto px-4 relative -mt-20 z-10">
+          <div className="flex flex-col md:flex-row items-end gap-6">
             <div className="bg-black border-2 border-white p-1 shadow-neo">
-              <div className="w-32 h-32 bg-surface flex items-center justify-center border-2 border-white">
-                <User className="w-16 h-16 text-primary" />
+              <div className="w-40 h-40 bg-surface flex items-center justify-center border-2 border-white relative overflow-hidden group">
+                <User className="w-20 h-20 text-primary relative z-10" />
+                <div className="absolute inset-0 bg-primary/10 group-hover:bg-primary/20 transition-colors"></div>
               </div>
             </div>
 
-            <div className="flex-1 mb-2">
-              <h1 className="text-4xl font-bold text-white font-display uppercase tracking-wide mb-2">
-                {profile.username}
-              </h1>
-              <div className="flex items-center space-x-4">
-                <span className={`px-3 py-1 text-xs font-bold border-2 uppercase ${profile.is_seller
-                  ? 'bg-primary text-black border-primary'
-                  : 'bg-gray-800 text-gray-400 border-gray-600'
-                  }`}>
-                  {profile.is_seller ? 'Verified Seller' : 'Member'}
-                </span>
-                <button
-                  onClick={copyProfileLink}
-                  className="text-primary hover:text-white flex items-center space-x-1 text-sm font-bold font-mono uppercase transition-colors"
-                >
-                  <Copy className="w-4 h-4" />
-                  <span>Share Profile</span>
-                </button>
+            <div className="flex-1 mb-4 bg-black/80 backdrop-blur-sm border-2 border-white p-6 shadow-neo-white transform translate-y-4 md:translate-y-0">
+              <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div>
+                  <h1 className="text-4xl font-bold text-white font-display uppercase tracking-wide mb-2 glitch-text" data-text={profile.username}>
+                    {profile.username}
+                  </h1>
+                  {profile.bio && (
+                    <p className="text-gray-300 font-mono text-sm max-w-xl line-clamp-2">
+                      {profile.bio}
+                    </p>
+                  )}
+                </div>
+
+                <div className="flex flex-col items-end gap-2">
+                  <div className="flex items-center space-x-2">
+                    {profile.is_seller && (
+                      <span className="px-3 py-1 text-xs font-bold bg-primary text-black border-2 border-black uppercase shadow-neo animate-pulse">
+                        Verified Seller
+                      </span>
+                    )}
+                    <button
+                      onClick={copyProfileLink}
+                      className="neo-button px-3 py-1 text-xs"
+                    >
+                      <Copy className="w-3 h-3 inline mr-1" />
+                      SHARE
+                    </button>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
-
-          {profile.bio && (
-            <div className="bg-black/50 border border-white/20 p-6 max-w-3xl">
-              <h3 className="text-sm font-bold text-gray-400 mb-2 font-mono uppercase">About</h3>
-              <p className="text-white font-mono leading-relaxed">
-                {profile.bio}
-              </p>
-            </div>
-          )}
         </div>
       </div>
 
       {/* Seller's Products */}
       {profile.is_seller && (
-        <div>
-          <div className="flex items-center space-x-4 mb-8">
-            <ShoppingBag className="w-8 h-8 text-primary" />
-            <h2 className="text-3xl font-bold text-white font-display uppercase">
-              Active Listings <span className="text-gray-500 text-xl ml-2 font-mono">({products.length})</span>
-            </h2>
+        <div className="mt-16">
+          <div className="flex items-center justify-between mb-8 border-b-2 border-white pb-4">
+            <div className="flex items-center space-x-4">
+              <ShoppingBag className="w-8 h-8 text-primary" />
+              <h2 className="text-3xl font-bold text-white font-display uppercase">
+                Store Inventory
+              </h2>
+            </div>
+            <span className="text-primary font-mono text-xl font-bold">
+              {products.length} ITEMS
+            </span>
           </div>
 
           {products.length === 0 ? (
@@ -182,7 +197,7 @@ export default function UserProfilePage({ username, onNavigate }: UserProfilePag
                     window.location.href = `?product=${product.unique_link}`;
                   }}
                 >
-                  <div className="relative h-56 overflow-hidden border-b-2 border-white">
+                  <div className="relative h-64 overflow-hidden border-b-2 border-white">
                     {product.image_url ? (
                       <img
                         src={product.image_url}
@@ -197,6 +212,12 @@ export default function UserProfilePage({ username, onNavigate }: UserProfilePag
                     <div className="absolute top-4 right-4 z-20">
                       <span className="px-3 py-1 text-xs font-bold bg-primary text-black border-2 border-black uppercase shadow-neo">
                         {product.type}
+                      </span>
+                    </div>
+                    {/* Quick Buy Overlay */}
+                    <div className="absolute inset-0 bg-black/60 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                      <span className="neo-button-primary transform translate-y-4 group-hover:translate-y-0 transition-transform duration-200">
+                        VIEW DETAILS
                       </span>
                     </div>
                   </div>
@@ -233,7 +254,7 @@ export default function UserProfilePage({ username, onNavigate }: UserProfilePag
                           e.stopPropagation();
                           handleBuyClick(product);
                         }}
-                        className="neo-button-primary flex items-center space-x-2"
+                        className="neo-button-primary flex items-center space-x-2 scale-90 hover:scale-100 transition-transform"
                       >
                         <ShoppingCart className="w-4 h-4" />
                         <span>BUY</span>

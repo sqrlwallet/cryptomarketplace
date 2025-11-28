@@ -5,9 +5,10 @@ import SEO from './SEO';
 
 interface AuthProps {
   onNavigate: (view: string) => void;
+  message?: string;
 }
 
-export default function Auth({ onNavigate }: AuthProps) {
+export default function Auth({ onNavigate, message }: AuthProps) {
   const [isSignUp, setIsSignUp] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -57,7 +58,11 @@ export default function Auth({ onNavigate }: AuthProps) {
             Ripework
           </h1>
           <p className="text-gray-400 text-lg font-mono">
-            &gt;&gt; DECENTRALIZED_MARKETPLACE_INIT
+            {message ? (
+              <span className="text-primary font-bold">{message}</span>
+            ) : (
+              <>&gt;&gt; DECENTRALIZED_MARKETPLACE_INIT</>
+            )}
           </p>
         </div>
 

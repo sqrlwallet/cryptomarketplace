@@ -18,6 +18,35 @@ export default function Marketplace({ onNavigate }: MarketplaceProps) {
   const [typeFilter, setTypeFilter] = useState<'all' | 'product' | 'service'>('all');
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [showPaymentModal, setShowPaymentModal] = useState(false);
+  const [currentSlide, setCurrentSlide] = useState(0);
+
+  const slides = [
+    {
+      image: '/promo-hero.png',
+      title: 'FUTURE OF COMMERCE',
+      subtitle: '> DECENTRALIZED. SECURE. ANONYMOUS.',
+      glitchText: 'FUTURE OF COMMERCE'
+    },
+    {
+      image: '/hero-digital.png',
+      title: 'DIGITAL ASSETS',
+      subtitle: '> VERIFIED. EXCLUSIVE. RARE.',
+      glitchText: 'DIGITAL ASSETS'
+    },
+    {
+      image: '/profile-banner.png',
+      title: 'ELITE SELLERS',
+      subtitle: '> JOIN THE TOP 1% CREATORS.',
+      glitchText: 'ELITE SELLERS'
+    }
+  ];
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % slides.length);
+    }, 5000);
+    return () => clearInterval(timer);
+  }, []);
 
   useEffect(() => {
     fetchProducts();
@@ -113,6 +142,49 @@ export default function Marketplace({ onNavigate }: MarketplaceProps) {
             </div>
           </div>
         </div>
+      </div>
+
+      {/* Promotional Features Section */}
+      <div className="mb-16">
+        <div className="relative h-[400px] mb-8 group overflow-hidden border-2 border-white shadow-neo-white">
+          {slides.map((slide, index) => (
+            <div
+              key={index}
+              className={`absolute inset-0 transition-opacity duration-1000 ${index === currentSlide ? 'opacity-100' : 'opacity-0'
+                }`}
+            >
+              <img
+                src={slide.image}
+                alt={slide.title}
+                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent flex flex-col justify-end p-8">
+                <h2
+                  className="text-4xl md:text-6xl font-bold text-white mb-4 font-display uppercase tracking-tighter glitch-text"
+                  data-text={slide.glitchText}
+                >
+                  {slide.title}
+                </h2>
+                <p className="text-xl text-primary font-mono max-w-2xl bg-black/50 p-4 border-l-4 border-primary backdrop-blur-sm">
+                  {slide.subtitle}
+                </p>
+              </div>
+            </div>
+          ))}
+
+          <div className="absolute bottom-4 right-4 flex space-x-2 z-20">
+            {slides.map((_, index) => (
+              <button
+                key={index}
+                onClick={() => setCurrentSlide(index)}
+                className={`w-3 h-3 border border-white transition-all ${index === currentSlide ? 'bg-primary' : 'bg-black hover:bg-white/50'
+                  }`}
+              />
+            ))}
+          </div>
+        </div>
+
+
       </div>
 
       {

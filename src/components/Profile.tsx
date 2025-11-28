@@ -101,8 +101,13 @@ export default function Profile() {
       </div>
 
       <div className="bg-surface border-2 border-white shadow-neo-white overflow-hidden">
-        <div className="bg-primary h-24 border-b-2 border-white relative overflow-hidden">
-          <div className="absolute inset-0 opacity-20" style={{ backgroundImage: 'linear-gradient(45deg, #000 25%, transparent 25%, transparent 75%, #000 75%, #000), linear-gradient(45deg, #000 25%, transparent 25%, transparent 75%, #000 75%, #000)', backgroundSize: '20px 20px', backgroundPosition: '0 0, 10px 10px' }}></div>
+        <div className="h-48 w-full relative overflow-hidden border-b-2 border-white group">
+          <img
+            src="/profile-banner.png"
+            alt="Profile Banner"
+            className="w-full h-full object-cover opacity-50 group-hover:opacity-100 transition-opacity duration-500"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent"></div>
         </div>
 
         <div className="px-6 pb-6">
