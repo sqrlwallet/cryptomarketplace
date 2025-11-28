@@ -86,9 +86,7 @@ function AppContent() {
             <div className="max-w-7xl mx-auto px-4 py-8">
               <div className="text-center text-gray-400 text-sm">
                 <p className="mb-2 font-display font-bold text-lg text-primary uppercase tracking-widest">Ripework</p>
-                <p className="text-xs text-gray-500 font-mono">
-                  Platform fee: 10% per transaction
-                </p>
+
               </div>
             </div>
           </footer>
