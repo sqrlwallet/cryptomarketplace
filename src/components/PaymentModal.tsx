@@ -205,6 +205,81 @@ export default function PaymentModal({ product, onClose }: PaymentModalProps) {
 
       await refreshProfile();
 
+      // Send email notifications
+      const { data: { user: authUser } } = await supabase.auth.getUser();
+      const { data: buyerProfile } = await supabase
+        .from('profiles')
+        .select('username')
+        .eq('id', user.id)
+        .maybeSingle();
+
+      const { data: sellerProfile } = await supabase
+        .from('profiles')
+        .select('username, id')
+        .eq('id', product.seller_id)
+        .maybeSingle();
+
+      // Get seller email via edge function
+      const sellerEmailResponse = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/get-user-email`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ userId: product.seller_id }),
+      });
+      const { email: sellerEmail } = await sellerEmailResponse.json();
+
+      // Send buyer email
+      if (authUser?.email) {
+        try {
+          await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/send-transaction-email`, {
+            method: 'POST',
+            headers: {
+              'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              type: 'buyer',
+              recipientEmail: authUser.email,
+              recipientName: buyerProfile?.username || 'Buyer',
+              productTitle: product.title,
+              productPrice: totalAmount,
+              currency: product.currency,
+              transactionId: transactionData.id,
+              sellerName: sellerProfile?.username || 'Seller',
+            }),
+          });
+        } catch (emailError) {
+          console.error('Failed to send buyer email:', emailError);
+        }
+      }
+
+      // Send seller email
+      if (sellerEmail) {
+        try {
+          await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/send-transaction-email`, {
+            method: 'POST',
+            headers: {
+              'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              type: 'seller',
+              recipientEmail: sellerEmail,
+              recipientName: sellerProfile?.username || 'Seller',
+              productTitle: product.title,
+              productPrice: totalAmount,
+              currency: product.currency,
+              transactionId: transactionData.id,
+              buyerName: buyerProfile?.username || 'Anonymous',
+            }),
+          });
+        } catch (emailError) {
+          console.error('Failed to send seller email:', emailError);
+        }
+      }
+
       setSuccess(true);
       setTimeout(() => {
         onClose();
