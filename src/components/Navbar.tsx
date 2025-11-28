@@ -1,4 +1,4 @@
-import { Wallet, ShoppingBag, LogOut, User, Store, Package } from 'lucide-react';
+import { Wallet, ShoppingBag, LogOut, User, Store, Package, BookOpen } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { useWallet } from '../contexts/WalletContext';
 
@@ -35,6 +35,21 @@ export default function Navbar({ currentView, onNavigate }: NavbarProps) {
               </div>
               <span className="text-2xl font-bold font-display text-white uppercase tracking-tighter">Ripework</span>
             </button>
+
+            {!user && (
+              <div className="hidden md:flex items-center space-x-4">
+                <button
+                  onClick={() => onNavigate('tutorial')}
+                  className={`px-4 py-2 font-bold uppercase tracking-wide transition-all duration-200 border-2 ${currentView === 'tutorial'
+                    ? 'bg-primary border-primary text-black shadow-neo-white'
+                    : 'bg-transparent border-transparent text-gray-400 hover:text-white hover:border-white'
+                    }`}
+                >
+                  <BookOpen className="w-4 h-4 inline mr-2" />
+                  Tutorial
+                </button>
+              </div>
+            )}
 
             {user && (
               <div className="hidden md:flex items-center space-x-4">
@@ -81,6 +96,8 @@ export default function Navbar({ currentView, onNavigate }: NavbarProps) {
                 >
                   Transactions
                 </button>
+
+
 
                 {!profile?.is_seller && (
                   <button

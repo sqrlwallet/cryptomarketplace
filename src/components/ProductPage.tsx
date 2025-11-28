@@ -395,7 +395,7 @@ export default function ProductPage({ uniqueLink, onNavigate }: ProductPageProps
                 <strong className="text-white">UNIQUE_LINK:</strong> {product.unique_link}
               </p>
               <p>
-                <strong className="text-white">SHARE_URL:</strong> {window.location.origin}?product={product.unique_link}
+                <strong className="text-white">SHARE_URL:</strong> {window.location.origin}/product/{product.unique_link}
               </p>
             </div>
           </div>

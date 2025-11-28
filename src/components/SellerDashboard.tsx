@@ -87,7 +87,7 @@ export default function SellerDashboard() {
   };
 
   const copyProductLink = (uniqueLink: string) => {
-    const url = `${window.location.origin}/?product=${uniqueLink}`;
+    const url = `${window.location.origin}/product/${uniqueLink}`;
     navigator.clipboard.writeText(url);
     alert('Product link copied to clipboard!');
   };
@@ -231,22 +231,20 @@ export default function SellerDashboard() {
       <div className="flex space-x-2 mb-6 border-b-2 border-white/20">
         <button
           onClick={() => setActiveTab('analytics')}
-          className={`px-6 py-3 font-bold font-mono uppercase transition-colors ${
-            activeTab === 'analytics'
+          className={`px-6 py-3 font-bold font-mono uppercase transition-colors ${activeTab === 'analytics'
               ? 'text-primary border-b-2 border-primary -mb-0.5'
               : 'text-gray-400 hover:text-white'
-          }`}
+            }`}
         >
           <BarChart3 className="w-4 h-4 inline mr-2" />
           Analytics
         </button>
         <button
           onClick={() => setActiveTab('products')}
-          className={`px-6 py-3 font-bold font-mono uppercase transition-colors ${
-            activeTab === 'products'
+          className={`px-6 py-3 font-bold font-mono uppercase transition-colors ${activeTab === 'products'
               ? 'text-primary border-b-2 border-primary -mb-0.5'
               : 'text-gray-400 hover:text-white'
-          }`}
+            }`}
         >
           <Package className="w-4 h-4 inline mr-2" />
           Products
@@ -345,13 +343,12 @@ export default function SellerDashboard() {
                             </div>
                           </td>
                           <td className="px-6 py-4">
-                            <div className={`inline-flex items-center space-x-1 px-2 py-1 border-2 ${
-                              item.conversion_rate > 5
+                            <div className={`inline-flex items-center space-x-1 px-2 py-1 border-2 ${item.conversion_rate > 5
                                 ? 'border-primary text-primary'
                                 : item.conversion_rate > 2
-                                ? 'border-white text-white'
-                                : 'border-gray-600 text-gray-400'
-                            }`}>
+                                  ? 'border-white text-white'
+                                  : 'border-gray-600 text-gray-400'
+                              }`}>
                               <TrendingUp className="w-3 h-3" />
                               <span className="font-mono font-bold text-xs">
                                 {item.conversion_rate.toFixed(1)}%

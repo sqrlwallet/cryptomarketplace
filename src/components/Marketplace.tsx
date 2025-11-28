@@ -6,7 +6,7 @@ import SEO from './SEO';
 import PaymentModal from './PaymentModal';
 
 interface MarketplaceProps {
-  onNavigate?: (view: string) => void;
+  onNavigate?: (view: string, param?: string) => void;
 }
 
 export default function Marketplace({ onNavigate }: MarketplaceProps) {
@@ -203,8 +203,9 @@ export default function Marketplace({ onNavigate }: MarketplaceProps) {
                 key={product.id}
                 className="neo-card group cursor-pointer relative bg-black hover:-translate-y-2 transition-transform duration-200"
                 onClick={() => {
-                  window.history.pushState({}, '', `?product=${product.unique_link}`);
-                  window.location.href = `?product=${product.unique_link}`;
+                  if (onNavigate) {
+                    onNavigate('product-page', product.unique_link);
+                  }
                 }}
               >
                 <div className="relative h-56 overflow-hidden border-b-2 border-white">

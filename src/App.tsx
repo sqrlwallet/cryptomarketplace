@@ -11,6 +11,7 @@ import MyPurchases from './components/MyPurchases';
 import ProductPage from './components/ProductPage';
 import UserProfilePage from './components/UserProfilePage';
 import Tutorial from './components/Tutorial';
+
 function AppContent() {
   const { loading, user } = useAuth();
   const [currentView, setCurrentView] = useState('marketplace');
@@ -21,31 +22,50 @@ function AppContent() {
     const path = window.location.pathname;
     const params = new URLSearchParams(window.location.search);
     const product = params.get('product');
+    const knownRoutes = ['auth', 'marketplace', 'my-purchases', 'seller-dashboard', 'transactions', 'profile', 'tutorial'];
 
     if (product) {
+      // Legacy support for ?product=
       setProductLink(product);
       setCurrentView('product-page');
+      // Update URL to new format without reloading
+      window.history.replaceState({}, '', `/product/${product}`);
+    } else if (path.startsWith('/product/') && path.length > 9) {
+      const productLinkFromPath = path.slice(9); // Remove '/product/'
+      setProductLink(productLinkFromPath);
+      setCurrentView('product-page');
     } else if (path.startsWith('/') && path.length > 1) {
-      const usernameFromPath = path.slice(1);
-      // Exclude known routes/views to prevent conflicts
-      const knownRoutes = ['auth', 'marketplace', 'my-purchases', 'seller-dashboard', 'transactions', 'profile', 'tutorial'];
-      if (usernameFromPath && !knownRoutes.includes(usernameFromPath)) {
-        setUsername(usernameFromPath);
+      const route = path.slice(1);
+
+      if (knownRoutes.includes(route)) {
+        setCurrentView(route);
+      } else {
+        setUsername(route);
         setCurrentView('user-profile');
       }
     }
   }, []);
 
-  const handleNavigate = (view: string, usernameParam?: string) => {
+  const handleNavigate = (view: string, param?: string) => {
     setCurrentView(view);
-    setProductLink(null);
 
-    if (view === 'user-profile' && usernameParam) {
-      setUsername(usernameParam);
-      window.history.pushState({}, '', `/${usernameParam}`);
-    } else {
+    if (view === 'product-page' && param) {
+      setProductLink(param);
       setUsername(null);
-      window.history.pushState({}, '', window.location.pathname.split('?')[0]);
+      window.history.pushState({}, '', `/product/${param}`);
+    } else if (view === 'user-profile' && param) {
+      setProductLink(null);
+      setUsername(param);
+      window.history.pushState({}, '', `/${param}`);
+    } else {
+      setProductLink(null);
+      setUsername(null);
+
+      let newPath = '/';
+      if (view !== 'marketplace') {
+        newPath = `/${view}`;
+      }
+      window.history.pushState({}, '', newPath);
     }
   };
 

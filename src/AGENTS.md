@@ -9,7 +9,7 @@ The `src` directory contains the core application code for the Ripework marketpl
 - **Role**: Main application component.
 - **Functionality**:
     - Handles client-side routing using a custom state-based router (`currentView`).
-    - Manages URL state for deep linking (e.g., `?product=...`, `/[username]`).
+    - Manages URL state for deep linking (e.g., `/product/...`, `/[username]`).
     - Renders the global layout including `Navbar` and `Footer`.
     - Integrates `AuthProvider` and `WalletProvider`.
 

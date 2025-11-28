@@ -7,7 +7,7 @@ import PaymentModal from './PaymentModal';
 
 interface UserProfilePageProps {
   username: string;
-  onNavigate: (view: string) => void;
+  onNavigate: (view: string, param?: string) => void;
 }
 
 export default function UserProfilePage({ username, onNavigate }: UserProfilePageProps) {
@@ -201,8 +201,9 @@ export default function UserProfilePage({ username, onNavigate }: UserProfilePag
                   key={product.id}
                   className="neo-card group cursor-pointer relative bg-black hover:-translate-y-2 transition-transform duration-200"
                   onClick={() => {
-                    window.history.pushState({}, '', `?product=${product.unique_link}`);
-                    window.location.href = `?product=${product.unique_link}`;
+                    if (onNavigate) {
+                      onNavigate('product-page', product.unique_link);
+                    }
                   }}
                 >
                   <div className="relative h-64 overflow-hidden border-b-2 border-white">
