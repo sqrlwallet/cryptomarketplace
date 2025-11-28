@@ -26,7 +26,9 @@ function AppContent() {
       setCurrentView('product-page');
     } else if (path.startsWith('/') && path.length > 1) {
       const usernameFromPath = path.slice(1);
-      if (usernameFromPath) {
+      // Exclude known routes/views to prevent conflicts
+      const knownRoutes = ['auth', 'marketplace', 'my-purchases', 'seller-dashboard', 'transactions', 'profile'];
+      if (usernameFromPath && !knownRoutes.includes(usernameFromPath)) {
         setUsername(usernameFromPath);
         setCurrentView('user-profile');
       }

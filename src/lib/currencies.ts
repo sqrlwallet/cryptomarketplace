@@ -54,7 +54,7 @@ export function getCurrencyConfig(symbol: string): Currency | undefined {
 }
 
 export function formatCurrencyAmount(amount: number, decimals: number): string {
-  return (amount * Math.pow(10, decimals)).toString();
+  return (amount * Math.pow(10, decimals)).toFixed(0);
 }
 
 export function parseCurrencyAmount(amount: string, decimals: number): number {

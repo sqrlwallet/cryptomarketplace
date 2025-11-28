@@ -81,6 +81,15 @@ export default function Navbar({ currentView, onNavigate }: NavbarProps) {
                 >
                   Transactions
                 </button>
+
+                {!profile?.is_seller && (
+                  <button
+                    onClick={() => onNavigate('profile')}
+                    className="px-4 py-2 font-bold uppercase tracking-wide bg-primary text-black border-2 border-primary hover:bg-white hover:border-white transition-all duration-200 shadow-neo-white animate-pulse"
+                  >
+                    Start Selling
+                  </button>
+                )}
               </div>
             )}
           </div>

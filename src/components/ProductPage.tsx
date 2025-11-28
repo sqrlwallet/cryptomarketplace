@@ -7,7 +7,7 @@ import PaymentModal from './PaymentModal';
 
 interface ProductPageProps {
   uniqueLink: string;
-  onNavigate: (view: string) => void;
+  onNavigate: (view: string, username?: string) => void;
 }
 
 export default function ProductPage({ uniqueLink, onNavigate }: ProductPageProps) {
@@ -233,9 +233,12 @@ export default function ProductPage({ uniqueLink, onNavigate }: ProductPageProps
                 <div className="flex items-center justify-between mb-8">
                   <div>
                     <p className="text-sm text-gray-500 mb-1 font-mono uppercase">Sold by</p>
-                    <p className="font-bold text-white text-lg font-display uppercase">
+                    <button
+                      onClick={() => onNavigate('user-profile', sellerProfile.username)}
+                      className="font-bold text-white text-lg font-display uppercase hover:text-primary transition-colors text-left"
+                    >
                       {sellerProfile.username || 'Anonymous Seller'}
-                    </p>
+                    </button>
                     <p className="text-xs text-gray-500 font-mono mt-1">
                       {sellerProfile.wallet_address.slice(0, 10)}...{sellerProfile.wallet_address.slice(-8)}
                     </p>
