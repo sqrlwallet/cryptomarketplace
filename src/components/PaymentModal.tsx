@@ -12,7 +12,7 @@ interface PaymentModalProps {
 
 export default function PaymentModal({ product, onClose }: PaymentModalProps) {
   const { walletAddress } = useWallet();
-  const { user } = useAuth();
+  const { user, refreshProfile } = useAuth();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
@@ -202,6 +202,8 @@ export default function PaymentModal({ product, onClose }: PaymentModalProps) {
         });
 
       if (accessError) throw accessError;
+
+      await refreshProfile();
 
       setSuccess(true);
       setTimeout(() => {
