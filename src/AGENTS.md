@@ -10,6 +10,7 @@ The `src` directory contains the core application code for the Ripework marketpl
 - **Functionality**:
     - Handles client-side routing using a custom state-based router (`currentView`).
     - Manages URL state for deep linking (e.g., `/product/...`, `/[username]`).
+    - **Public Access**: Allows unauthenticated access to `ProductPage` and `UserProfilePage` for SEO and sharing.
     - Renders the global layout including `Navbar` and `Footer`.
     - Integrates `AuthProvider` and `WalletProvider`.
 

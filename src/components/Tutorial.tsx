@@ -1,4 +1,4 @@
-import { BookOpen, ShoppingBag, Store, Wallet, ArrowRight, ShieldCheck, Zap } from 'lucide-react';
+import { BookOpen, ShoppingBag, Store, ArrowRight, ShieldCheck, Zap } from 'lucide-react';
 
 export default function Tutorial() {
     return (
@@ -99,6 +99,148 @@ export default function Tutorial() {
                                 </div>
                             </div>
                         ))}
+                    </div>
+                </div>
+            </div>
+
+            {/* Who is Ripework For? */}
+            <div className="space-y-12">
+                <div className="text-center max-w-3xl mx-auto">
+                    <h2 className="text-4xl md:text-5xl font-black font-display uppercase text-white mb-4">
+                        Who is <span className="text-primary">Ripework</span> For?
+                    </h2>
+                    <p className="text-gray-400 font-mono text-lg">
+                        Whether you're an artist, developer, or educator, Ripework gives you the tools to monetize your passion directly.
+                    </p>
+                </div>
+
+                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {/* Digital Artists */}
+                    <div className="neo-card p-6 bg-surface hover:bg-surface/80 transition-colors">
+                        <div className="h-12 w-12 bg-pink-500 border-2 border-black shadow-[4px_4px_0px_0px_rgba(255,255,255,1)] mb-6 flex items-center justify-center">
+                            <span className="text-2xl">🎨</span>
+                        </div>
+                        <h3 className="text-xl font-bold text-white mb-3 font-display uppercase">Digital Artists & Designers</h3>
+                        <p className="text-gray-400 text-sm mb-4 font-mono">The platform's "bread and butter". Sell tools that help other artists create.</p>
+                        <ul className="text-sm text-gray-300 space-y-2 font-mono list-disc pl-4">
+                            <li>Procreate/Photoshop brushes</li>
+                            <li>3D models (Blender/Maya)</li>
+                            <li>Texture packs & Icon sets</li>
+                            <li>Fonts & Design assets</li>
+                        </ul>
+                    </div>
+
+                    {/* Productivity Crowd */}
+                    <div className="neo-card p-6 bg-surface hover:bg-surface/80 transition-colors">
+                        <div className="h-12 w-12 bg-blue-500 border-2 border-black shadow-[4px_4px_0px_0px_rgba(255,255,255,1)] mb-6 flex items-center justify-center">
+                            <span className="text-2xl">📊</span>
+                        </div>
+                        <h3 className="text-xl font-bold text-white mb-3 font-display uppercase">The Productivity Crowd</h3>
+                        <p className="text-gray-400 text-sm mb-4 font-mono">Build organization systems and sell them as templates.</p>
+                        <ul className="text-sm text-gray-300 space-y-2 font-mono list-disc pl-4">
+                            <li>Notion templates (Second Brain)</li>
+                            <li>Finance Trackers</li>
+                            <li>Student Planners</li>
+                            <li>Obsidian workflows</li>
+                        </ul>
+                    </div>
+
+                    {/* Developers */}
+                    <div className="neo-card p-6 bg-surface hover:bg-surface/80 transition-colors">
+                        <div className="h-12 w-12 bg-green-500 border-2 border-black shadow-[4px_4px_0px_0px_rgba(255,255,255,1)] mb-6 flex items-center justify-center">
+                            <span className="text-2xl">💻</span>
+                        </div>
+                        <h3 className="text-xl font-bold text-white mb-3 font-display uppercase">Developers & Indie Hackers</h3>
+                        <p className="text-gray-400 text-sm mb-4 font-mono">Sell code without building a full billing system from scratch.</p>
+                        <ul className="text-sm text-gray-300 space-y-2 font-mono list-disc pl-4">
+                            <li>Code snippets & Scripts</li>
+                            <li>WordPress plugins</li>
+                            <li>Website themes</li>
+                            <li>OBS scripts for streamers</li>
+                        </ul>
+                    </div>
+
+                    {/* Writers */}
+                    <div className="neo-card p-6 bg-surface hover:bg-surface/80 transition-colors">
+                        <div className="h-12 w-12 bg-yellow-500 border-2 border-black shadow-[4px_4px_0px_0px_rgba(255,255,255,1)] mb-6 flex items-center justify-center">
+                            <span className="text-2xl">✍️</span>
+                        </div>
+                        <h3 className="text-xl font-bold text-white mb-3 font-display uppercase">Writers & Educators</h3>
+                        <p className="text-gray-400 text-sm mb-4 font-mono">Build your email list and sell direct to your readers.</p>
+                        <ul className="text-sm text-gray-300 space-y-2 font-mono list-disc pl-4">
+                            <li>PDF "How-to" guides</li>
+                            <li>eBooks & Freelancing guides</li>
+                            <li>Video courses</li>
+                            <li>Educational resources</li>
+                        </ul>
+                    </div>
+
+                    {/* Audio Engineers */}
+                    <div className="neo-card p-6 bg-surface hover:bg-surface/80 transition-colors">
+                        <div className="h-12 w-12 bg-purple-500 border-2 border-black shadow-[4px_4px_0px_0px_rgba(255,255,255,1)] mb-6 flex items-center justify-center">
+                            <span className="text-2xl">🎵</span>
+                        </div>
+                        <h3 className="text-xl font-bold text-white mb-3 font-display uppercase">Audio Engineers & Musicians</h3>
+                        <p className="text-gray-400 text-sm mb-4 font-mono">Monetize your sounds and production tools.</p>
+                        <ul className="text-sm text-gray-300 space-y-2 font-mono list-disc pl-4">
+                            <li>Drum sample packs</li>
+                            <li>Sound effects (SFX)</li>
+                            <li>Beat stars</li>
+                            <li>VST plugins</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            {/* Promotion Guide */}
+            <div className="neo-card p-8 md:p-12 border-t-8 border-primary bg-surface relative overflow-hidden">
+                <div className="relative z-10">
+                    <h2 className="text-4xl md:text-5xl font-black font-display uppercase text-white mb-8">
+                        How to <span className="text-primary">Promote & Sell</span>
+                    </h2>
+
+                    <div className="grid md:grid-cols-2 gap-12">
+                        <div className="space-y-6">
+                            <div className="flex gap-4">
+                                <div className="text-4xl font-black text-primary/50">01</div>
+                                <div>
+                                    <h3 className="text-xl font-bold text-white mb-2 uppercase">Build an Audience First</h3>
+                                    <p className="text-gray-400 font-mono text-sm leading-relaxed">
+                                        Don't launch to crickets. Start sharing your work on Twitter/X, Instagram, or LinkedIn. Share your process, not just the final product. "Build in public" to generate hype before you drop.
+                                    </p>
+                                </div>
+                            </div>
+                            <div className="flex gap-4">
+                                <div className="text-4xl font-black text-primary/50">02</div>
+                                <div>
+                                    <h3 className="text-xl font-bold text-white mb-2 uppercase">Leverage Email Marketing</h3>
+                                    <p className="text-gray-400 font-mono text-sm leading-relaxed">
+                                        Social media algorithms are fickle. An email list is yours forever. Collect emails from day one. Send value, not just sales pitches. When you launch, you'll have a direct line to buyers.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="space-y-6">
+                            <div className="flex gap-4">
+                                <div className="text-4xl font-black text-primary/50">03</div>
+                                <div>
+                                    <h3 className="text-xl font-bold text-white mb-2 uppercase">Create Compelling Visuals</h3>
+                                    <p className="text-gray-400 font-mono text-sm leading-relaxed">
+                                        Your cover image is your storefront. Make it pop. Use high-contrast colors, clear typography, and show exactly what the user gets. A bad thumbnail kills sales.
+                                    </p>
+                                </div>
+                            </div>
+                            <div className="flex gap-4">
+                                <div className="text-4xl font-black text-primary/50">04</div>
+                                <div>
+                                    <h3 className="text-xl font-bold text-white mb-2 uppercase">Use Social Proof</h3>
+                                    <p className="text-gray-400 font-mono text-sm leading-relaxed">
+                                        Got a happy customer? Ask for a testimonial. Share screenshots of people using your product. Social proof builds trust, and trust drives sales in the crypto space.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

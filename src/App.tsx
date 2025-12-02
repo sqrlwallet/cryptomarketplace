@@ -13,7 +13,7 @@ import UserProfilePage from './components/UserProfilePage';
 import Tutorial from './components/Tutorial';
 
 function AppContent() {
-  const { loading, user } = useAuth();
+  const { loading } = useAuth();
   const [currentView, setCurrentView] = useState('marketplace');
   const [productLink, setProductLink] = useState<string | null>(null);
   const [username, setUsername] = useState<string | null>(null);
@@ -91,18 +91,10 @@ function AppContent() {
           {currentView === 'auth' && <Auth onNavigate={handleNavigate} />}
           {currentView === 'marketplace' && <Marketplace onNavigate={handleNavigate} />}
           {currentView === 'product-page' && productLink && (
-            user ? (
-              <ProductPage uniqueLink={productLink} onNavigate={handleNavigate} />
-            ) : (
-              <Auth onNavigate={handleNavigate} message=">> SIGN_UP_TO_VIEW_PRODUCT" />
-            )
+            <ProductPage uniqueLink={productLink} onNavigate={handleNavigate} />
           )}
           {currentView === 'user-profile' && username && (
-            user ? (
-              <UserProfilePage username={username} onNavigate={handleNavigate} />
-            ) : (
-              <Auth onNavigate={handleNavigate} message=">> SIGN_UP_TO_VIEW_STORE" />
-            )
+            <UserProfilePage username={username} onNavigate={handleNavigate} />
           )}
           {currentView === 'my-purchases' && <MyPurchases />}
           {currentView === 'seller-dashboard' && <SellerDashboard />}
