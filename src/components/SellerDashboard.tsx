@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
-import { Plus, Package, Edit2, Trash2, Copy, ExternalLink, TrendingUp, Eye, ShoppingBag, DollarSign, BarChart3 } from 'lucide-react';
-import { supabase, type Product } from '../lib/supabase';
+import { Plus, Package, Edit2, Trash2, Copy, ExternalLink, TrendingUp, Eye, ShoppingBag, DollarSign, BarChart3, Mail } from 'lucide-react';
+import { supabase, type Product, type Transaction, type Profile } from '../lib/supabase';
 import { useAuth } from '../contexts/AuthContext';
 import CreateProductModal from './CreateProductModal';
 import SEO from './SEO';
@@ -22,10 +22,11 @@ export default function SellerDashboard() {
   const { profile } = useAuth();
   const [products, setProducts] = useState<Product[]>([]);
   const [analytics, setAnalytics] = useState<ProductAnalytics[]>([]);
+  const [sales, setSales] = useState<(Transaction & { products: Product | null, buyer_profile?: Profile, buyer_email?: string })[]>([]);
   const [loading, setLoading] = useState(true);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
-  const [activeTab, setActiveTab] = useState<'analytics' | 'products'>('analytics');
+  const [activeTab, setActiveTab] = useState<'analytics' | 'products' | 'sales'>('analytics');
 
   useEffect(() => {
     fetchData();
@@ -54,6 +55,35 @@ export default function SellerDashboard() {
 
     if (!analyticsError && analyticsData) {
       setAnalytics(analyticsData as ProductAnalytics[]);
+    }
+
+    // Fetch sales (transactions)
+    if (profile.wallet_address) {
+      const { data: salesData, error: salesError } = await supabase
+        .from('transactions')
+        .select(`
+          *,
+          products (*)
+        `)
+        .eq('seller_wallet', profile.wallet_address)
+        .order('created_at', { ascending: false });
+
+      if (!salesError && salesData) {
+        // Fetch buyer profiles
+        const buyerWallets = [...new Set(salesData.map(s => s.buyer_wallet))];
+        const { data: profilesData } = await supabase
+          .from('profiles')
+          .select('*')
+          .in('wallet_address', buyerWallets);
+
+        const salesWithProfiles = salesData.map(sale => ({
+          ...sale,
+          buyer_profile: profilesData?.find(p => p.wallet_address === sale.buyer_wallet),
+          products: sale.products as unknown as Product // Type assertion for joined data
+        }));
+
+        setSales(salesWithProfiles);
+      }
     }
 
     setLoading(false);
@@ -123,6 +153,30 @@ export default function SellerDashboard() {
       day: 'numeric',
       year: 'numeric',
     });
+  };
+
+  const revealEmail = async (saleId: string, buyerId: string) => {
+    try {
+      const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/get-user-email`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ userId: buyerId }),
+      });
+
+      if (!response.ok) throw new Error('Failed to fetch email');
+
+      const { email } = await response.json();
+
+      setSales(prev => prev.map(s =>
+        s.id === saleId ? { ...s, buyer_email: email || 'No email found' } : s
+      ));
+    } catch (error) {
+      console.error('Error fetching email:', error);
+      alert('Could not fetch buyer email. They may not have one set.');
+    }
   };
 
   if (!profile?.is_seller) {
@@ -232,8 +286,8 @@ export default function SellerDashboard() {
         <button
           onClick={() => setActiveTab('analytics')}
           className={`px-6 py-3 font-bold font-mono uppercase transition-colors ${activeTab === 'analytics'
-              ? 'text-primary border-b-2 border-primary -mb-0.5'
-              : 'text-gray-400 hover:text-white'
+            ? 'text-primary border-b-2 border-primary -mb-0.5'
+            : 'text-gray-400 hover:text-white'
             }`}
         >
           <BarChart3 className="w-4 h-4 inline mr-2" />
@@ -242,12 +296,22 @@ export default function SellerDashboard() {
         <button
           onClick={() => setActiveTab('products')}
           className={`px-6 py-3 font-bold font-mono uppercase transition-colors ${activeTab === 'products'
-              ? 'text-primary border-b-2 border-primary -mb-0.5'
-              : 'text-gray-400 hover:text-white'
+            ? 'text-primary border-b-2 border-primary -mb-0.5'
+            : 'text-gray-400 hover:text-white'
             }`}
         >
           <Package className="w-4 h-4 inline mr-2" />
           Products
+        </button>
+        <button
+          onClick={() => setActiveTab('sales')}
+          className={`px-6 py-3 font-bold font-mono uppercase transition-colors ${activeTab === 'sales'
+            ? 'text-primary border-b-2 border-primary -mb-0.5'
+            : 'text-gray-400 hover:text-white'
+            }`}
+        >
+          <ShoppingBag className="w-4 h-4 inline mr-2" />
+          Sales
         </button>
       </div>
 
@@ -344,10 +408,10 @@ export default function SellerDashboard() {
                           </td>
                           <td className="px-6 py-4">
                             <div className={`inline-flex items-center space-x-1 px-2 py-1 border-2 ${item.conversion_rate > 5
-                                ? 'border-primary text-primary'
-                                : item.conversion_rate > 2
-                                  ? 'border-white text-white'
-                                  : 'border-gray-600 text-gray-400'
+                              ? 'border-primary text-primary'
+                              : item.conversion_rate > 2
+                                ? 'border-white text-white'
+                                : 'border-gray-600 text-gray-400'
                               }`}>
                               <TrendingUp className="w-3 h-3" />
                               <span className="font-mono font-bold text-xs">
@@ -474,6 +538,89 @@ export default function SellerDashboard() {
                   </div>
                 </div>
               ))}
+            </div>
+          )}
+
+          {/* Sales Tab */}
+          {activeTab === 'sales' && (
+            <div className="bg-black border-2 border-white shadow-neo-white overflow-hidden">
+              <div className="overflow-x-auto">
+                <table className="w-full">
+                  <thead className="bg-surface border-b-2 border-white">
+                    <tr>
+                      <th className="px-6 py-4 text-left text-xs font-bold text-primary uppercase tracking-wider font-mono">
+                        Date
+                      </th>
+                      <th className="px-6 py-4 text-left text-xs font-bold text-primary uppercase tracking-wider font-mono">
+                        Product
+                      </th>
+                      <th className="px-6 py-4 text-left text-xs font-bold text-primary uppercase tracking-wider font-mono">
+                        Buyer
+                      </th>
+                      <th className="px-6 py-4 text-left text-xs font-bold text-primary uppercase tracking-wider font-mono">
+                        Amount
+                      </th>
+                      <th className="px-6 py-4 text-left text-xs font-bold text-primary uppercase tracking-wider font-mono">
+                        Email
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y-2 divide-white/20">
+                    {sales.map((sale) => (
+                      <tr key={sale.id} className="hover:bg-surface transition-colors">
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-400 font-mono">
+                          {new Date(sale.created_at).toLocaleDateString()}
+                        </td>
+                        <td className="px-6 py-4">
+                          <div className="text-sm font-bold text-white font-mono uppercase">
+                            {sale.products?.title || 'Unknown Product'}
+                          </div>
+                        </td>
+                        <td className="px-6 py-4">
+                          <div className="text-sm text-white font-mono">
+                            {sale.buyer_profile?.username || 'Anonymous'}
+                          </div>
+                          <div className="text-xs text-gray-500 font-mono">
+                            {sale.buyer_wallet.slice(0, 6)}...{sale.buyer_wallet.slice(-4)}
+                          </div>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <div className="text-sm font-bold text-white font-mono">
+                            {sale.seller_amount.toFixed(4)} {sale.currency}
+                          </div>
+                        </td>
+                        <td className="px-6 py-4">
+                          {sale.buyer_email ? (
+                            <div className="flex items-center space-x-2 text-primary font-mono text-sm">
+                              <Mail className="w-4 h-4" />
+                              <span>{sale.buyer_email}</span>
+                            </div>
+                          ) : sale.buyer_profile?.id ? (
+                            <button
+                              onClick={() => revealEmail(sale.id, sale.buyer_profile!.id)}
+                              className="neo-button px-3 py-1 text-xs flex items-center space-x-2"
+                            >
+                              <Eye className="w-3 h-3" />
+                              <span>Reveal Email</span>
+                            </button>
+                          ) : (
+                            <span className="text-xs text-gray-500 font-mono uppercase">
+                              No Profile Linked
+                            </span>
+                          )}
+                        </td>
+                      </tr>
+                    ))}
+                    {sales.length === 0 && (
+                      <tr>
+                        <td colSpan={5} className="px-6 py-8 text-center text-gray-400 font-mono uppercase">
+                          No sales recorded yet
+                        </td>
+                      </tr>
+                    )}
+                  </tbody>
+                </table>
+              </div>
             </div>
           )}
         </>

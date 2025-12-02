@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { ShoppingBag, Download, FileText } from 'lucide-react';
+import { ShoppingBag, Download, FileText, Copy, Eye } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../contexts/AuthContext';
 import PurchasedFiles from './PurchasedFiles';
@@ -15,6 +15,7 @@ interface Purchase {
     image_url: string | null;
     has_files: boolean;
     file_count: number;
+    secret_text: string | null;
   };
 }
 
@@ -45,7 +46,8 @@ export default function MyPurchases() {
           description,
           image_url,
           has_files,
-          file_count
+          file_count,
+          secret_text
         )
       `)
       .eq('buyer_wallet', profile.wallet_address)
@@ -170,6 +172,30 @@ export default function MyPurchases() {
                 {purchase.download_count > 0 && (
                   <div className="mt-3 text-xs text-gray-500 text-center font-mono uppercase">
                     DOWNLOADED {purchase.download_count} TIME{purchase.download_count !== 1 ? 'S' : ''}
+                  </div>
+                )}
+
+                {purchase.products.secret_text && (
+                  <div className="mt-4 bg-primary/10 border border-primary p-3">
+                    <div className="flex items-center space-x-2 text-primary mb-2">
+                      <Eye className="w-4 h-4" />
+                      <span className="text-xs font-bold font-mono uppercase">Secret Content</span>
+                    </div>
+                    <div className="bg-black border border-primary/30 p-2 mb-2">
+                      <p className="text-white text-xs font-mono break-all whitespace-pre-wrap">
+                        {purchase.products.secret_text}
+                      </p>
+                    </div>
+                    <button
+                      onClick={() => {
+                        navigator.clipboard.writeText(purchase.products.secret_text || '');
+                        alert('Secret copied to clipboard!');
+                      }}
+                      className="w-full flex items-center justify-center space-x-2 bg-black text-primary border border-primary py-1 hover:bg-primary hover:text-black transition-colors text-xs font-bold uppercase font-mono"
+                    >
+                      <Copy className="w-3 h-3" />
+                      <span>COPY_SECRET</span>
+                    </button>
                   </div>
                 )}
               </div>
