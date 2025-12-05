@@ -405,7 +405,7 @@ export default function CreateProductModal({ product, onClose }: CreateProductMo
               onChange={(e) => setFormData({ ...formData, currency: e.target.value })}
               className="w-full px-4 py-2 bg-black border-2 border-white text-white focus:border-primary focus:shadow-neo outline-none font-mono uppercase"
             >
-              <option value="USDC">USDC (Base)</option>
+              <option value="USDC">USDC (Avalanche)</option>
             </select>
             <p className="text-xs text-gray-500 mt-1 font-mono uppercase">
               &gt;&gt; SELECT_PAYMENT_CURRENCY

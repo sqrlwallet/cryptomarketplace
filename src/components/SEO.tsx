@@ -10,7 +10,7 @@ interface SEOProps {
 
 export default function SEO({ title, description, name = 'Ripework', type = 'website', image }: SEOProps) {
     const fullTitle = title ? `${title} | Ripework` : 'Ripework - Premium Digital Marketplace';
-    const fullDescription = description || 'Buy and sell premium digital assets with secure crypto payments on Base chain.';
+    const fullDescription = description || 'Buy and sell premium digital assets with secure crypto payments on Avalanche C-Chain.';
     const defaultImage = window.location.origin + '/promo-hero.png';
     const finalImage = image || defaultImage;
 

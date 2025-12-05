@@ -100,13 +100,13 @@ export default function PaymentModal({ product, onClose }: PaymentModalProps) {
       return;
     }
 
-    // Check if connected to Base chain
+    // Check if connected to Avalanche C-Chain
     const chainId = await window.ethereum.request({ method: 'eth_chainId' });
-    if (chainId !== '0x2105') { // 8453 in hex
+    if (chainId !== '0xa86a') { // 43114 in hex
       try {
         await window.ethereum.request({
           method: 'wallet_switchEthereumChain',
-          params: [{ chainId: '0x2105' }],
+          params: [{ chainId: '0xa86a' }],
         });
       } catch (switchError: any) {
         // This error code indicates that the chain has not been added to MetaMask.
@@ -116,24 +116,24 @@ export default function PaymentModal({ product, onClose }: PaymentModalProps) {
               method: 'wallet_addEthereumChain',
               params: [
                 {
-                  chainId: '0x2105',
-                  chainName: 'Base Mainnet',
+                  chainId: '0xa86a',
+                  chainName: 'Avalanche C-Chain',
                   nativeCurrency: {
-                    name: 'ETH',
-                    symbol: 'ETH',
+                    name: 'AVAX',
+                    symbol: 'AVAX',
                     decimals: 18,
                   },
-                  rpcUrls: ['https://mainnet.base.org'],
-                  blockExplorerUrls: ['https://basescan.org'],
+                  rpcUrls: ['https://api.avax.network/ext/bc/C/rpc'],
+                  blockExplorerUrls: ['https://snowtrace.io/'],
                 },
               ],
             });
           } catch (addError) {
-            setError('Please switch to Base Mainnet to continue');
+            setError('Please switch to Avalanche C-Chain to continue');
             return;
           }
         } else {
-          setError('Please switch to Base Mainnet to continue');
+          setError('Please switch to Avalanche C-Chain to continue');
           return;
         }
       }
@@ -207,11 +207,16 @@ export default function PaymentModal({ product, onClose }: PaymentModalProps) {
 
       // Send email notifications
       const { data: { user: authUser } } = await supabase.auth.getUser();
-      const { data: buyerProfile } = await supabase
-        .from('profiles')
-        .select('username')
-        .eq('id', user.id)
-        .maybeSingle();
+
+      let buyerProfile = null;
+      if (user) {
+        const { data } = await supabase
+          .from('profiles')
+          .select('username')
+          .eq('id', user.id)
+          .maybeSingle();
+        buyerProfile = data;
+      }
 
       const { data: sellerProfile } = await supabase
         .from('profiles')
