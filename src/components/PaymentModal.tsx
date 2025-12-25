@@ -100,13 +100,13 @@ export default function PaymentModal({ product, onClose }: PaymentModalProps) {
       return;
     }
 
-    // Check if connected to Avalanche C-Chain
+    // Check if connected to Base Mainnet
     const chainId = await window.ethereum.request({ method: 'eth_chainId' });
-    if (chainId !== '0xa86a') { // 43114 in hex
+    if (chainId !== '0x2105') { // 8453 in hex
       try {
         await window.ethereum.request({
           method: 'wallet_switchEthereumChain',
-          params: [{ chainId: '0xa86a' }],
+          params: [{ chainId: '0x2105' }],
         });
       } catch (switchError: any) {
         // This error code indicates that the chain has not been added to MetaMask.
@@ -116,24 +116,24 @@ export default function PaymentModal({ product, onClose }: PaymentModalProps) {
               method: 'wallet_addEthereumChain',
               params: [
                 {
-                  chainId: '0xa86a',
-                  chainName: 'Avalanche C-Chain',
+                  chainId: '0x2105',
+                  chainName: 'Base Mainnet',
                   nativeCurrency: {
-                    name: 'AVAX',
-                    symbol: 'AVAX',
+                    name: 'ETH',
+                    symbol: 'ETH',
                     decimals: 18,
                   },
-                  rpcUrls: ['https://api.avax.network/ext/bc/C/rpc'],
-                  blockExplorerUrls: ['https://snowtrace.io/'],
+                  rpcUrls: ['https://mainnet.base.org'],
+                  blockExplorerUrls: ['https://basescan.org/'],
                 },
               ],
             });
           } catch (addError) {
-            setError('Please switch to Avalanche C-Chain to continue');
+            setError('Please switch to Base Mainnet to continue');
             return;
           }
         } else {
-          setError('Please switch to Avalanche C-Chain to continue');
+          setError('Please switch to Base Mainnet to continue');
           return;
         }
       }

@@ -111,7 +111,7 @@ export default function Marketplace({ onNavigate }: MarketplaceProps) {
     <div className="max-w-7xl mx-auto px-4 py-8">
       <SEO
         title="Marketplace"
-        description="Discover premium digital assets, products, and services. Secure crypto payments on Avalanche C-Chain with instant delivery."
+        description="Discover premium digital assets, products, and services. Secure crypto payments on Base Mainnet with instant delivery."
       />
 
       <div className="bg-surface border-2 border-white p-6 mb-12 shadow-neo-white">

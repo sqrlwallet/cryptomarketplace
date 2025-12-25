@@ -1,7 +1,7 @@
 # Ripework - Digital Marketplace
 
 ## 🎯 Project Overview
-Ripework is a premium digital marketplace for buying and selling crypto assets with secure payments on the Avalanche C-Chain using USDC.
+Ripework is a premium digital marketplace for buying and selling crypto assets with secure payments on Base Mainnet using USDC.
 
 ## ✨ Key Features
 
@@ -12,7 +12,7 @@ Ripework is a premium digital marketplace for buying and selling crypto assets w
 - Public profile pages for sellers
 
 ### 💰 Payment System
-- **Blockchain**: Avalanche C-Chain (Chain ID: 43114)
+- **Blockchain**: Base Mainnet (Chain ID: 8453)
 - **Currency**: USDC only
 - **Platform Fee**: 10% per transaction
 - **Payment Flow**: 
@@ -46,7 +46,7 @@ Ripework is a premium digital marketplace for buying and selling crypto assets w
 - Complete transaction history
 - Filter by purchases/sales
 - View platform fees and seller amounts
-- Direct links to Snowtrace for verification
+- Direct links to Basescan for verification
 - Real-time balance tracking
 
 ### 🎨 Design System
@@ -72,7 +72,7 @@ Ripework is a premium digital marketplace for buying and selling crypto assets w
 - **Database**: Supabase (PostgreSQL)
 - **Authentication**: Supabase Auth
 - **Storage**: Supabase Storage for images and files
-- **Blockchain**: Web3 integration for Avalanche network
+- **Blockchain**: Web3 integration for Base network
 
 ### Key Dependencies
 - `@supabase/supabase-js` - Backend services
@@ -208,4 +208,4 @@ For support, please contact the Ripework team.
 
 ---
 
-**Ripework** - Premium Digital Marketplace on Avalanche C-Chain
+**Ripework** - Premium Digital Marketplace on Base Mainnet

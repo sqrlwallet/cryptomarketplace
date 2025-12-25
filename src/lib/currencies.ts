@@ -13,12 +13,12 @@ export interface Currency {
 export const SUPPORTED_CURRENCIES: Record<string, Currency> = {
   USDC: {
     symbol: 'USDC',
-    name: 'USD Coin (Avalanche)',
+    name: 'USD Coin (Base)',
     decimals: 6,
     type: 'erc20',
-    contractAddress: '0xB97EF9Ef8734C71904D8002F8b6Bc66Dd9c48a6E', // Native USDC on Avalanche
-    chainId: 43114,
-    chainName: 'Avalanche C-Chain',
+    contractAddress: '0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913',
+    chainId: 8453,
+    chainName: 'Base Mainnet',
   },
 };
 
