@@ -11,6 +11,8 @@ import MyPurchases from './components/MyPurchases';
 import ProductPage from './components/ProductPage';
 import UserProfilePage from './components/UserProfilePage';
 import Tutorial from './components/Tutorial';
+import { Analytics } from '@vercel/analytics/react';
+import { SpeedInsights } from '@vercel/speed-insights/react';
 
 function AppContent() {
   const { loading } = useAuth();
@@ -130,9 +132,12 @@ function App() {
     <AuthProvider>
       <WalletProvider>
         <AppContent />
+        <Analytics />
+        <SpeedInsights />
       </WalletProvider>
     </AuthProvider>
   );
 }
 
 export default App;
+
